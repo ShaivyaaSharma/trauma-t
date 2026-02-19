@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import QuizComponent from '@/components/QuizComponent';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 const ModuleContentPage = () => {
   const { courseId, moduleId } = useParams();
