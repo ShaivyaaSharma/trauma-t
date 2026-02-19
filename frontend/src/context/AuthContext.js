@@ -3,7 +3,8 @@ import axios from 'axios';
 
 const AuthContext = createContext(null);
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+// Use empty string for same-origin requests (works with proxy and preview)
+const API = `${process.env.REACT_APP_BACKEND_URL || ''}/api`;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
