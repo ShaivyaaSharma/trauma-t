@@ -104,6 +104,15 @@ class TTIDetailedTester:
             if success:
                 self.module_ids = [m['id'] for m in modules]
                 
+                # Access Module 1 detail to create progress record
+                success, module_1_detail = self.run_test(
+                    "Access Module 1 Detail", "GET", f"courses/{self.course_id}/modules/{self.module_ids[0]}", 200, auth_required=True
+                )
+                
+                if not success:
+                    print("   ❌ Failed to access Module 1")
+                    return False
+                
                 # Complete Module 1 to unlock Module 2
                 module_1_correct_answers = [1, 3, 1, 1, 1]  # Based on seed data
                 success, result = self.run_test(
