@@ -62,6 +62,22 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/courses/:courseId/learn" 
+            element={
+              <ProtectedRoute>
+                <CourseLearningPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/courses/:courseId/modules/:moduleId" 
+            element={
+              <ProtectedRoute>
+                <ModuleContentPage />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
         <Toaster position="top-right" />
       </BrowserRouter>
