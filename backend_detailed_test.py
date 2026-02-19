@@ -150,8 +150,9 @@ class TTIDetailedTester:
             return False
             
         num_q2 = len(module_2_quiz.get('questions', []))
-        # Pass Module 2 with correct answers (assuming [1,1,2,2,1,1] works)
-        pass_answers_2 = [1] * num_q2  # All answer index 1
+        # Complete Module 2 to unlock Module 3
+        # Module 2 correct answers: [1, 1, 2, 2, 1, 2] based on seed data
+        pass_answers_2 = [1, 1, 2, 2, 1, 2]  # Correct answers for Module 2
         
         success, result = self.run_test(
             "Complete Module 2", "POST", f"courses/{self.course_id}/modules/{self.module_ids[1]}/submit-quiz",
