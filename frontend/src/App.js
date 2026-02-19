@@ -12,6 +12,8 @@ import SignupPage from "@/pages/SignupPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AboutPage from "@/pages/AboutPage";
 import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
+import CourseLearningPage from "@/pages/CourseLearningPage";
+import ModuleContentPage from "@/pages/ModuleContentPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
