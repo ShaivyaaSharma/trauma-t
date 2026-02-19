@@ -99,11 +99,24 @@ class TTIDetailedTester:
                 print(f"❌ Enrollment creation failed")
                 return False
                 
-            # Get module IDs
+            # Get module IDs and complete Module 1 to unlock others
             success, modules = self.run_test("Get Modules", "GET", f"courses/{self.course_id}/modules", 200, auth_required=True)
             if success:
                 self.module_ids = [m['id'] for m in modules]
-                return True
+                
+                # Complete Module 1 to unlock Module 2
+                module_1_correct_answers = [1, 3, 1, 1, 1]  # Based on seed data
+                success, result = self.run_test(
+                    "Complete Module 1", "POST", f"courses/{self.course_id}/modules/{self.module_ids[0]}/submit-quiz",
+                    200, data={"module_id": self.module_ids[0], "answers": module_1_correct_answers}, auth_required=True
+                )
+                
+                if success and result.get('passed'):
+                    print("   ✅ Module 1 completed, Module 2 should be unlocked")
+                    return True
+                else:
+                    print("   ❌ Failed to complete Module 1")
+                    return False
                 
         except Exception as e:
             print(f"❌ Setup failed: {e}")
