@@ -8,11 +8,13 @@ class TTIAPITester:
         self.base_url = base_url
         self.token = None
         self.user_id = None
+        self.course_id = None
+        self.module_ids = []
         self.tests_run = 0
         self.tests_passed = 0
-        self.test_user_email = f"test_user_{datetime.now().strftime('%H%M%S')}@example.com"
-        self.test_user_password = "TestPass123!"
-        self.test_user_name = "Test User"
+        self.test_user_email = f"ett_learner_{datetime.now().strftime('%H%M%S')}@example.com"
+        self.test_user_password = "ETTLearning123!"
+        self.test_user_name = "ETT Learning Student"
 
     def run_test(self, name, method, endpoint, expected_status, data=None, auth_required=False):
         """Run a single API test"""
