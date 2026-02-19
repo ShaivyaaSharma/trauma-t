@@ -197,6 +197,8 @@ class TTIAPITester:
         if success:
             print(f"   {response.get('message', 'Seeding completed')}")
         return success
+
+    def test_seed_modules(self):
         """Test seed modules endpoint"""
         success, response = self.run_test("Seed Module Data", "POST", "seed-modules", 200)
         if success:
