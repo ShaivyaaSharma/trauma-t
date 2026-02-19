@@ -121,6 +121,63 @@ class CheckoutRequest(BaseModel):
     course_id: str
     origin_url: str
 
+# ============ LEARNING MODULE MODELS ============
+
+class QuizQuestion(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    question: str
+    options: List[str]
+    correct_answer: int  # index of correct option (0-3)
+    explanation: str = ""
+
+class ModuleAssessment(BaseModel):
+    quiz_questions: List[QuizQuestion] = []
+    passing_score: float = 0.8  # 80%
+
+class Module(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    course_id: str
+    week: int
+    module_number: int
+    title: str
+    description: str
+    learning_objectives: List[str] = []
+    topics_covered: List[str] = []
+    assessment: ModuleAssessment
+    estimated_time: str = "3 hours"
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class ModuleProgress(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    course_id: str
+    module_id: str
+    is_unlocked: bool = False
+    is_completed: bool = False
+    quiz_attempts: int = 0
+    best_score: float = 0.0
+    last_attempt_at: Optional[str] = None
+    completed_at: Optional[str] = None
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class QuizSubmission(BaseModel):
+    module_id: str
+    answers: List[int]  # indices of selected options
+
+class QuizResult(BaseModel):
+    score: float
+    total_questions: int
+    correct_answers: int
+    passed: bool
+    questions_review: List[Dict]  # detailed review of each question
+
+class UserProgressSummary(BaseModel):
+    course_id: str
+    total_modules: int
+    completed_modules: int
+    current_module: int
+    overall_progress: float
+
 # ============ AUTH HELPERS ============
 
 def hash_password(password: str) -> str:
