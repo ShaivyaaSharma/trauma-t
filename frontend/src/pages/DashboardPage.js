@@ -37,7 +37,7 @@ const DashboardPage = () => {
   const handleLogout = () => {
     logout();
     toast.success('Signed out successfully');
-    navigate('/');
+    navigate('/', { replace: true });
   };
 
   const formatPrice = (price) => {
