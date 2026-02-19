@@ -651,8 +651,23 @@ class TTIAPITester:
         
         module_2_id = self.module_ids[1] if len(self.module_ids) > 1 else self.module_ids[0]
         
-        # First attempt with failing score
-        failing_answers = [0, 0, 0, 0, 0]  # 0% score
+        # First get the quiz to check number of questions
+        success, quiz_info = self.run_test(
+            "Get Quiz Info for Retry Test",
+            "GET",
+            f"courses/{self.course_id}/modules/{module_2_id}/quiz",
+            200,
+            auth_required=True
+        )
+        
+        if not success:
+            return False
+        
+        num_questions = len(quiz_info.get('questions', []))
+        print(f"   Module has {num_questions} questions")
+        
+        # First attempt with failing score (all wrong answers)
+        failing_answers = [0] * num_questions  # All first option (likely wrong)
         success, first_result = self.run_test(
             "First Quiz Attempt (Failing)",
             "POST",
@@ -668,8 +683,8 @@ class TTIAPITester:
         first_score = first_result.get('score', 0)
         print(f"   First attempt score: {first_score:.1%}")
         
-        # Second attempt with better score
-        better_answers = [1, 1, 2, 2, 1]  # Should be higher score
+        # Second attempt with better score (mix of answers)
+        better_answers = [1, 1, 2, 2] + [1] * max(0, num_questions - 4)  # Should be better
         success, second_result = self.run_test(
             "Second Quiz Attempt (Better)",
             "POST",
@@ -686,7 +701,7 @@ class TTIAPITester:
         print(f"   Second attempt score: {second_score:.1%}")
         
         # Check quiz attempts and best score via quiz endpoint
-        success, quiz_info = self.run_test(
+        success, updated_quiz_info = self.run_test(
             "Check Quiz Attempts",
             "GET",
             f"courses/{self.course_id}/modules/{module_2_id}/quiz",
@@ -695,8 +710,8 @@ class TTIAPITester:
         )
         
         if success:
-            attempts = quiz_info.get('attempts', 0)
-            best_score = quiz_info.get('best_score', 0)
+            attempts = updated_quiz_info.get('attempts', 0)
+            best_score = updated_quiz_info.get('best_score', 0)
             
             print(f"   Total attempts: {attempts}")
             print(f"   Best score tracked: {best_score:.1%}")
