@@ -961,6 +961,864 @@ async def seed_data():
     
     return {"message": f"Seeded {len(courses)} courses"}
 
+@api_router.post("/seed-modules")
+async def seed_modules():
+    """Seed learning modules for ETT Foundational Course"""
+    # Get the ETT Foundational Course
+    foundational_course = await db.courses.find_one({"title": "ETT Foundational Course"}, {"_id": 0})
+    if not foundational_course:
+        raise HTTPException(status_code=404, detail="ETT Foundational Course not found. Run /seed first.")
+    
+    course_id = foundational_course["id"]
+    
+    # Clear existing modules for this course
+    await db.modules.delete_many({"course_id": course_id})
+    
+    modules_data = [
+        {
+            "week": 1,
+            "module_number": 1,
+            "title": "Introduction to Emotional Transformation Therapy",
+            "description": "This module introduces the history, purpose, and theoretical basis of ETT. Students learn how ETT integrates psychotherapy with light and color modalities to rapidly transform emotional states.",
+            "learning_objectives": [
+                "Define Emotional Transformation Therapy (ETT) and its foundational principles",
+                "Summarize the historical development of ETT and its founding theorists",
+                "Describe how ETT combines cognitive-emotional theory with sensory stimulation",
+                "Differentiate ETT from other modalities (e.g., EMDR, cognitive-behavioral therapy)",
+                "Recognize the certification pathway and professional standards (ICF, NBCC, CEUs)"
+            ],
+            "topics_covered": [
+                "Origins and evolution of ETT; role of the ETT Institute",
+                "Core components: light/color devices, eye movement, attachment focus",
+                "Theoretical foundations: mind-body connection, introduction to attachment",
+                "Scope of ETT practice and prerequisites (licensed practitioner requirement)",
+                "Overview of training levels (ETT I–V) for context"
+            ],
+            "estimated_time": "3 hours",
+            "quiz_questions": [
+                {
+                    "question": "What is the primary purpose of Emotional Transformation Therapy (ETT)?",
+                    "options": [
+                        "To provide medication management for emotional disorders",
+                        "To rapidly transform emotional states through psychotherapy integrated with light and color modalities",
+                        "To replace traditional cognitive-behavioral therapy entirely",
+                        "To focus exclusively on physical rehabilitation"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT integrates psychotherapy with light and color modalities to rapidly transform emotional states, combining cognitive-emotional theory with sensory stimulation."
+                },
+                {
+                    "question": "Which of the following is NOT a core component of ETT?",
+                    "options": [
+                        "Light and color devices",
+                        "Eye movement techniques",
+                        "Attachment focus",
+                        "Pharmaceutical interventions"
+                    ],
+                    "correct_answer": 3,
+                    "explanation": "ETT uses light/color devices, eye movement, and attachment focus. It does not involve pharmaceutical interventions."
+                },
+                {
+                    "question": "What is a prerequisite for ETT practice?",
+                    "options": [
+                        "Medical degree",
+                        "Licensed practitioner status in mental health",
+                        "Engineering background",
+                        "No prerequisites required"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT requires practitioners to be licensed mental health professionals."
+                },
+                {
+                    "question": "How does ETT differ from EMDR?",
+                    "options": [
+                        "ETT uses only talk therapy",
+                        "ETT incorporates light and color stimulation in addition to eye movement",
+                        "EMDR is faster than ETT",
+                        "They are exactly the same"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "While both use eye movement, ETT additionally incorporates light and color modalities for emotional transformation."
+                },
+                {
+                    "question": "Which professional standards recognize ETT certification?",
+                    "options": [
+                        "Only local state boards",
+                        "ICF and NBCC continuing education standards",
+                        "No recognized standards",
+                        "Only medical boards"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT certification is designed to meet ICF (International Coach Federation) and NBCC (National Board for Certified Counselors) continuing education standards."
+                }
+            ]
+        },
+        {
+            "week": 1,
+            "module_number": 2,
+            "title": "Theoretical Foundations of Emotion and Attachment",
+            "description": "This module covers psychological theories of emotion and attachment relevant to ETT. Students explore how emotions are generated and processed in the brain and body, and how early attachment patterns influence emotional regulation.",
+            "learning_objectives": [
+                "Describe major theories of emotion (e.g., physiological, cognitive)",
+                "Explain the role of attachment styles in emotional development and trauma",
+                "Identify common attachment patterns (secure, anxious, avoidant, disorganized)",
+                "Discuss interpersonal neurobiology: how relationships shape the brain",
+                "Understand mind-body connections in stress and healing"
+            ],
+            "topics_covered": [
+                "Overview of emotion models (James-Lange, Schachter-Singer, constructivist theories)",
+                "Neurobiological components: amygdala, limbic system, stress response",
+                "Attachment theory basics: Bowlby, Ainsworth; secure vs. insecure attachments",
+                "Interpersonal neurobiology principles: emotional regulation and memory",
+                "Impact of trauma and early experiences on emotional patterns"
+            ],
+            "estimated_time": "4 hours",
+            "quiz_questions": [
+                {
+                    "question": "According to the James-Lange theory of emotion, what comes first?",
+                    "options": [
+                        "Cognitive interpretation",
+                        "Physiological response",
+                        "Emotional feeling",
+                        "Behavioral action"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "The James-Lange theory suggests that physiological responses occur first, and then we interpret these responses as emotions."
+                },
+                {
+                    "question": "Which brain structure is primarily responsible for processing emotional responses, especially fear?",
+                    "options": [
+                        "Prefrontal cortex",
+                        "Amygdala",
+                        "Hippocampus",
+                        "Cerebellum"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "The amygdala is a key part of the limbic system that processes emotional responses, particularly fear and threat detection."
+                },
+                {
+                    "question": "What characterizes a secure attachment style?",
+                    "options": [
+                        "Fear of abandonment and clinginess",
+                        "Emotional distance and avoidance of intimacy",
+                        "Comfort with intimacy and independence",
+                        "Unpredictable and chaotic relationship patterns"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "Secure attachment is characterized by comfort with both intimacy and independence, with balanced emotional regulation."
+                },
+                {
+                    "question": "According to interpersonal neurobiology, how do relationships affect the brain?",
+                    "options": [
+                        "They have no impact on brain structure",
+                        "They only affect adults, not children",
+                        "They shape neural pathways and emotional regulation capabilities",
+                        "They only affect memory, not emotions"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "Interpersonal neurobiology shows that relationships, especially early ones, shape neural pathways and influence emotional regulation and memory systems."
+                },
+                {
+                    "question": "Which attachment pattern is associated with inconsistent caregiving in childhood?",
+                    "options": [
+                        "Secure attachment",
+                        "Anxious-preoccupied attachment",
+                        "Dismissive-avoidant attachment",
+                        "No attachment pattern"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Anxious attachment typically develops when caregiving is inconsistent, leading to fear of abandonment and clingy behavior."
+                },
+                {
+                    "question": "What is the primary function of the limbic system?",
+                    "options": [
+                        "Logical reasoning",
+                        "Motor coordination",
+                        "Emotional processing and memory",
+                        "Language production"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "The limbic system is primarily responsible for emotional processing, memory formation, and stress responses."
+                }
+            ]
+        },
+        {
+            "week": 2,
+            "module_number": 3,
+            "title": "Neuroscience of Visual Stimulation",
+            "description": "This module examines how visual stimuli (light and color) affect brain function and emotion. Students learn basic neuroanatomy of vision and emotion, including how light cues influence neural pathways and brainwave states.",
+            "learning_objectives": [
+                "Explain how photic (light) stimulation can influence neural activity and brainwave patterns",
+                "Identify brain regions involved in visual processing and emotional response",
+                "Describe neuroplasticity and its relevance to emotional change",
+                "Understand the role of brainwave entrainment in emotion regulation"
+            ],
+            "topics_covered": [
+                "Anatomy of the human visual system: retina, optic nerve, visual pathways",
+                "Brain regions for emotion processing: limbic system, visual cortex, thalamus",
+                "Color perception and wavelengths: how different colors are processed neurologically",
+                "Brainwave frequencies (alpha, beta, theta) and entrainment principles",
+                "Theoretical models of how light therapy may alter neural circuits"
+            ],
+            "estimated_time": "3 hours",
+            "quiz_questions": [
+                {
+                    "question": "What is the first structure in the eye that processes visual information?",
+                    "options": [
+                        "Optic nerve",
+                        "Retina",
+                        "Visual cortex",
+                        "Thalamus"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "The retina is the light-sensitive layer at the back of the eye that first processes visual information through photoreceptor cells."
+                },
+                {
+                    "question": "Which brainwave frequency is typically associated with relaxed, meditative states?",
+                    "options": [
+                        "Beta waves (13-30 Hz)",
+                        "Alpha waves (8-12 Hz)",
+                        "Gamma waves (30+ Hz)",
+                        "Delta waves (0.5-4 Hz)"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Alpha waves (8-12 Hz) are associated with relaxed, calm, and meditative states of consciousness."
+                },
+                {
+                    "question": "What is neuroplasticity?",
+                    "options": [
+                        "The brain's inability to change after childhood",
+                        "The brain's ability to form and reorganize synaptic connections",
+                        "A type of brain surgery",
+                        "The hardening of neural pathways with age"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Neuroplasticity refers to the brain's ability to form new neural connections and reorganize throughout life, which is crucial for learning and emotional change."
+                },
+                {
+                    "question": "Which brain structure acts as a relay station for visual information before it reaches the visual cortex?",
+                    "options": [
+                        "Amygdala",
+                        "Hippocampus",
+                        "Thalamus",
+                        "Cerebellum"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "The thalamus acts as a relay station, processing and directing sensory information, including visual input, to appropriate cortical areas."
+                },
+                {
+                    "question": "What is brainwave entrainment?",
+                    "options": [
+                        "A surgical procedure on the brain",
+                        "The process of brainwaves synchronizing with external rhythmic stimuli",
+                        "A type of brain damage",
+                        "The natural aging of the brain"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Brainwave entrainment is the phenomenon where brainwave frequencies synchronize with external rhythmic stimuli like light or sound."
+                }
+            ]
+        },
+        {
+            "week": 2,
+            "module_number": 4,
+            "title": "Spectral Resonance Technique (SRT) and Color Psychology",
+            "description": "This module presents the theory behind the Spectral Resonance Technique. Students explore how color associations relate to emotional states and learn the conceptual steps of SRT.",
+            "learning_objectives": [
+                "Describe the SRT procedure and its key components (color chart, wand)",
+                "Explain the psychological significance of different colors in ETT",
+                "Analyze how color selection can signal underlying emotional themes",
+                "Outline the theoretical steps of an SRT session"
+            ],
+            "topics_covered": [
+                "The spectral resonance color chart: structure and color-emotion correspondences",
+                "Psychological and cultural meanings of basic colors",
+                "SRT protocol: screening for photosensitivity, color selection, verbal processing",
+                "Case examples (conceptual) of using SRT to target core emotions",
+                "Comparisons to other color/light therapies"
+            ],
+            "estimated_time": "3 hours",
+            "quiz_questions": [
+                {
+                    "question": "What are the two primary tools used in Spectral Resonance Technique (SRT)?",
+                    "options": [
+                        "Medication and talk therapy",
+                        "Color chart and wand",
+                        "Hypnosis and meditation",
+                        "Worksheets and journals"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "SRT uses a spectral resonance color chart and a wand to identify and work with core emotions through color associations."
+                },
+                {
+                    "question": "In color psychology, which color is typically associated with calmness and tranquility?",
+                    "options": [
+                        "Red",
+                        "Yellow",
+                        "Blue",
+                        "Orange"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "Blue is commonly associated with calmness, tranquility, and relaxation in color psychology."
+                },
+                {
+                    "question": "Why is photosensitivity screening important before SRT?",
+                    "options": [
+                        "It's not important",
+                        "To identify clients who may have adverse reactions to light stimulation",
+                        "To determine eye color",
+                        "To check vision acuity"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Photosensitivity screening is crucial to identify clients who may be at risk for seizures or adverse reactions to light stimulation."
+                },
+                {
+                    "question": "What does a client's color selection in SRT potentially reveal?",
+                    "options": [
+                        "Their favorite color",
+                        "Their underlying emotional themes and states",
+                        "Their artistic abilities",
+                        "Their cultural background only"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "In SRT, color selection can signal underlying emotional themes and provide insight into the client's emotional state."
+                },
+                {
+                    "question": "Which color is often associated with energy and intensity, or sometimes anger?",
+                    "options": [
+                        "Green",
+                        "Purple",
+                        "Red",
+                        "Gray"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "Red is typically associated with energy, intensity, passion, and sometimes anger or aggression in color psychology."
+                }
+            ]
+        },
+        {
+            "week": 3,
+            "module_number": 5,
+            "title": "Multidimensional Eye Movement (MDEM) Theory",
+            "description": "This module delves into the theory of Multidimensional Eye Movement (MDEM), an advanced ETT technique. Students study how guided eye positions and movements are theorized to access and transform emotional memories.",
+            "learning_objectives": [
+                "Explain the core principles of MDEM and its intended therapeutic effects",
+                "Differentiate MDEM from EMDR and other eye movement-based therapies",
+                "Describe the typical theoretical sequence of an MDEM session",
+                "Understand how specific eye movement patterns may facilitate emotional processing"
+            ],
+            "topics_covered": [
+                "Overview of MDEM steps: targets, eye positions, bilateral movement",
+                "Neuroscientific rationale for eye movement in trauma processing",
+                "Comparisons: MDEM vs EMDR (speed, structure, applications)",
+                "Role of therapist cues and client focus during MDEM",
+                "Review of conceptual clinical examples demonstrating MDEM effects"
+            ],
+            "estimated_time": "4 hours",
+            "quiz_questions": [
+                {
+                    "question": "What does MDEM stand for?",
+                    "options": [
+                        "Multidimensional Eye Development Method",
+                        "Multidimensional Eye Movement",
+                        "Medical Eye Movement Diagnosis",
+                        "Multifaceted Emotional Development Method"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "MDEM stands for Multidimensional Eye Movement, an advanced ETT technique."
+                },
+                {
+                    "question": "How does MDEM primarily differ from EMDR?",
+                    "options": [
+                        "MDEM doesn't use eye movements",
+                        "MDEM incorporates multidimensional eye positions and often combines with light/color stimulation",
+                        "EMDR is always faster than MDEM",
+                        "They are identical techniques"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "MDEM differs from EMDR by incorporating multidimensional eye positions and directions, often combined with light and color stimulation for more targeted emotional processing."
+                },
+                {
+                    "question": "What is the theoretical basis for using eye movements in trauma processing?",
+                    "options": [
+                        "Eye movements have no scientific basis",
+                        "Eye movements may facilitate bilateral brain stimulation and memory processing",
+                        "Eye movements only improve vision",
+                        "Eye movements replace the need for talk therapy entirely"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Eye movements are theorized to facilitate bilateral brain stimulation, which may help process traumatic memories and reduce their emotional intensity."
+                },
+                {
+                    "question": "In an MDEM session, what role does the therapist play?",
+                    "options": [
+                        "Passive observer only",
+                        "Provides cues and guides client focus through specific eye positions",
+                        "Hypnotizes the client",
+                        "No role - it's completely self-directed"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "The therapist actively provides cues and guides the client's focus through specific eye positions and movements during MDEM."
+                },
+                {
+                    "question": "What are 'targets' in the context of MDEM?",
+                    "options": [
+                        "Physical objects in the room",
+                        "Goals for therapy",
+                        "Specific memories, emotions, or sensations being addressed",
+                        "Eye exercises"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "In MDEM, 'targets' refer to specific memories, emotions, body sensations, or beliefs that are the focus of the therapeutic intervention."
+                },
+                {
+                    "question": "What does bilateral movement in MDEM facilitate?",
+                    "options": [
+                        "Physical exercise",
+                        "Stimulation of both brain hemispheres",
+                        "Better eyesight",
+                        "Faster reading"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Bilateral movement in MDEM is designed to stimulate both hemispheres of the brain, which may facilitate emotional processing and memory integration."
+                }
+            ]
+        },
+        {
+            "week": 3,
+            "module_number": 6,
+            "title": "Integrating ETT Techniques into Practice",
+            "description": "This module covers how to synthesize ETT techniques in a counseling context. Students learn how to plan an ETT-informed session and how ETT complements traditional psychotherapy.",
+            "learning_objectives": [
+                "Identify assessment methods appropriate for ETT",
+                "Develop a treatment plan integrating ETT methods with clinical goals",
+                "Plan session structure combining talk therapy and ETT procedures",
+                "Explain how to adapt techniques to client needs while ensuring safety"
+            ],
+            "topics_covered": [
+                "Client intake and screening: contraindications (e.g., seizure risk)",
+                "Goal setting and outcome expectations in an ETT context",
+                "Structuring an ETT session: orientation, technique application, debrief",
+                "Integrating cognitive reframing and psychoeducation with ETT tools",
+                "Professional practice issues: informed consent, documentation, referral"
+            ],
+            "estimated_time": "4 hours",
+            "quiz_questions": [
+                {
+                    "question": "Which of the following is a contraindication for ETT involving light stimulation?",
+                    "options": [
+                        "Mild anxiety",
+                        "History of photosensitive seizures",
+                        "Depression",
+                        "Relationship issues"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "A history of photosensitive seizures is a major contraindication for ETT techniques involving light stimulation due to safety concerns."
+                },
+                {
+                    "question": "What are the three main phases of an ETT session structure?",
+                    "options": [
+                        "Beginning, middle, end",
+                        "Orientation, technique application, debrief",
+                        "Assessment, intervention, evaluation",
+                        "Intake, treatment, discharge"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "An ETT session typically follows the structure of orientation (preparing the client), technique application (using ETT methods), and debrief (processing the experience)."
+                },
+                {
+                    "question": "Why is informed consent particularly important in ETT practice?",
+                    "options": [
+                        "It's not important",
+                        "To inform clients about the unique methods and potential risks of light/color stimulation",
+                        "Only for legal protection",
+                        "It's the same as any other therapy"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Informed consent is crucial in ETT to ensure clients understand the unique methods involving light and color stimulation, potential benefits, risks, and contraindications."
+                },
+                {
+                    "question": "How should ETT techniques be integrated with traditional talk therapy?",
+                    "options": [
+                        "ETT completely replaces talk therapy",
+                        "They should never be combined",
+                        "ETT techniques complement and enhance talk therapy by providing additional tools for emotional processing",
+                        "Only use one or the other per session"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "ETT techniques are designed to complement and enhance traditional talk therapy, providing additional tools for emotional processing and transformation while maintaining the therapeutic relationship."
+                },
+                {
+                    "question": "What should be included in ETT treatment planning?",
+                    "options": [
+                        "Only the specific techniques to be used",
+                        "Client goals, appropriate ETT methods, safety considerations, and outcome measures",
+                        "Just the session schedule",
+                        "Only contraindications"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Comprehensive ETT treatment planning includes client goals, appropriate techniques, safety considerations, integration with other therapies, and methods to measure outcomes."
+                }
+            ]
+        },
+        {
+            "week": 4,
+            "module_number": 7,
+            "title": "Ethical, Cultural, and Professional Standards",
+            "description": "This module addresses ethical and multicultural considerations for ETT practitioners. Students review professional codes and discuss their application to ETT.",
+            "learning_objectives": [
+                "Summarize key ethical principles from NBCC and ICF relevant to ETT practice",
+                "Identify cultural factors affecting perceptions of color, light, and emotion",
+                "Discuss confidentiality, boundaries, and informed consent in light-based therapy",
+                "Recognize the role of clinician self-care and professional development"
+            ],
+            "topics_covered": [
+                "Ethical standards: autonomy, non-maleficence, informed consent",
+                "Cultural considerations: symbolic meanings of colors, cultural attitudes toward therapy",
+                "Legal and professional guidelines: scope of practice, mandated reporting",
+                "Client privacy and data protection",
+                "Continuing competency: supervision, peer consultation, ongoing education"
+            ],
+            "estimated_time": "3 hours",
+            "quiz_questions": [
+                {
+                    "question": "Which ethical principle emphasizes 'do no harm' in therapeutic practice?",
+                    "options": [
+                        "Autonomy",
+                        "Non-maleficence",
+                        "Beneficence",
+                        "Justice"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Non-maleficence is the ethical principle of 'do no harm,' requiring practitioners to avoid causing harm to clients."
+                },
+                {
+                    "question": "Why are cultural considerations important in ETT practice?",
+                    "options": [
+                        "They are not important",
+                        "Colors and therapy approaches may have different meanings and acceptance across cultures",
+                        "Only for international clients",
+                        "Only for language translation"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Cultural considerations are crucial because colors, light, and therapeutic approaches may have different symbolic meanings and levels of acceptance across different cultures."
+                },
+                {
+                    "question": "What is the scope of practice for ETT?",
+                    "options": [
+                        "Anyone can practice ETT without training",
+                        "Limited to licensed mental health professionals with appropriate ETT training",
+                        "Only medical doctors",
+                        "Only psychologists"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT practice is limited to licensed mental health professionals who have completed appropriate ETT training and certification."
+                },
+                {
+                    "question": "Which of the following best describes ethical boundaries in ETT practice?",
+                    "options": [
+                        "Boundaries are not necessary",
+                        "Maintaining professional relationships, avoiding dual relationships, and clear therapeutic limits",
+                        "Only physical boundaries matter",
+                        "Boundaries only apply to payment"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Ethical boundaries include maintaining professional relationships, avoiding conflicts of interest or dual relationships, and establishing clear therapeutic limits."
+                },
+                {
+                    "question": "What is the importance of continuing professional development in ETT?",
+                    "options": [
+                        "It's optional after initial certification",
+                        "Essential for maintaining competency, staying current with research, and ethical practice",
+                        "Only for new practitioners",
+                        "Not necessary if you have experience"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Continuing professional development is essential for maintaining competency, staying current with new research and techniques, and ensuring ethical, effective practice."
+                }
+            ]
+        },
+        {
+            "week": 4,
+            "module_number": 8,
+            "title": "Research, Evidence, and Outcomes",
+            "description": "This module reviews research evidence and outcome evaluation methods related to ETT and similar therapies. Students learn about evidence-based practice and basic research literacy.",
+            "learning_objectives": [
+                "Summarize major research findings on ETT efficacy and related methods",
+                "Understand the principles of evidence-based practice in therapy",
+                "Identify common outcome measures for emotional and psychological change",
+                "Critically evaluate a brief research scenario or claim"
+            ],
+            "topics_covered": [
+                "Overview of research on light therapy, SRT, MDEM",
+                "Basics of evidence-based practice and clinical decision-making",
+                "Outcome measurement: symptom rating scales",
+                "Program evaluation essentials: tracking client progress",
+                "Research limitations and current gaps in ETT literature"
+            ],
+            "estimated_time": "3 hours",
+            "quiz_questions": [
+                {
+                    "question": "What is evidence-based practice in psychotherapy?",
+                    "options": [
+                        "Only using techniques from research studies",
+                        "Integrating best research evidence with clinical expertise and client values",
+                        "Ignoring clinical experience",
+                        "Only following treatment manuals"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Evidence-based practice involves integrating the best available research evidence with clinical expertise and individual client values and circumstances."
+                },
+                {
+                    "question": "Which type of research design provides the strongest evidence for treatment efficacy?",
+                    "options": [
+                        "Case studies",
+                        "Randomized controlled trials (RCTs)",
+                        "Anecdotal reports",
+                        "Expert opinions"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Randomized controlled trials (RCTs) are considered the gold standard for establishing treatment efficacy due to their rigorous methodology and control of variables."
+                },
+                {
+                    "question": "What are outcome measures in therapy?",
+                    "options": [
+                        "The therapist's subjective impressions",
+                        "Standardized tools to assess client progress and treatment effectiveness",
+                        "Only client satisfaction surveys",
+                        "Number of sessions attended"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Outcome measures are standardized assessment tools used to objectively track client progress and evaluate the effectiveness of therapeutic interventions."
+                },
+                {
+                    "question": "What is a current limitation in ETT research?",
+                    "options": [
+                        "There are no limitations",
+                        "Need for more large-scale controlled studies and long-term outcome data",
+                        "Too much research has been done",
+                        "Research shows it doesn't work"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Like many emerging therapeutic approaches, ETT would benefit from more large-scale controlled studies, long-term outcome data, and replication studies."
+                },
+                {
+                    "question": "Why is it important to track client outcomes in ETT practice?",
+                    "options": [
+                        "It's not important",
+                        "For billing purposes only",
+                        "To evaluate effectiveness, guide treatment adjustments, and contribute to evidence base",
+                        "Only for research studies"
+                    ],
+                    "correct_answer": 2,
+                    "explanation": "Tracking outcomes helps evaluate treatment effectiveness, guides clinical decision-making and adjustments, demonstrates accountability, and contributes to the growing evidence base."
+                }
+            ]
+        },
+        {
+            "week": 5,
+            "module_number": 9,
+            "title": "Case Conceptualization and Synthesis",
+            "description": "This module integrates knowledge by having students work through case studies in a conceptual manner. Learners apply ETT theory to hypothetical client cases.",
+            "learning_objectives": [
+                "Apply ETT principles to analyze a client's emotional presentation",
+                "Develop a comprehensive treatment approach using ETT and supportive techniques",
+                "Synthesize learning from previous modules to justify chosen interventions",
+                "Articulate a case formulation in structured written form"
+            ],
+            "topics_covered": [
+                "Case conceptualization methods",
+                "Holistic perspective: integrating cognitive, emotional, and somatic elements",
+                "Designing an ETT-informed session plan step by step",
+                "Professional documentation: writing case notes and treatment rationale",
+                "Common clinical issues addressed by ETT (trauma, anxiety, chronic pain)"
+            ],
+            "estimated_time": "4 hours",
+            "quiz_questions": [
+                {
+                    "question": "What is case conceptualization?",
+                    "options": [
+                        "Writing a case summary",
+                        "A comprehensive understanding of a client's presentation, history, and treatment approach",
+                        "Diagnosing a client",
+                        "Scheduling appointments"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Case conceptualization is a comprehensive process of understanding a client's presentation, background, contributing factors, and developing an appropriate treatment approach."
+                },
+                {
+                    "question": "When designing an ETT treatment plan, what should be considered first?",
+                    "options": [
+                        "The specific ETT techniques to use",
+                        "The client's presenting concerns, goals, safety, and appropriateness for ETT",
+                        "The session schedule",
+                        "Equipment availability"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Treatment planning should begin with thoroughly understanding the client's presenting concerns, goals, safety considerations, and determining if ETT is appropriate before selecting specific techniques."
+                },
+                {
+                    "question": "What does a holistic perspective in ETT involve?",
+                    "options": [
+                        "Only focusing on emotions",
+                        "Integrating cognitive, emotional, somatic, and relational aspects of client experience",
+                        "Only addressing physical symptoms",
+                        "Treating all clients the same way"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "A holistic perspective in ETT involves integrating cognitive (thoughts), emotional (feelings), somatic (body sensations), and relational (interpersonal) aspects of the client's experience."
+                },
+                {
+                    "question": "Which of the following clinical issues is commonly addressed with ETT?",
+                    "options": [
+                        "Broken bones",
+                        "Trauma and PTSD",
+                        "Viral infections",
+                        "Dental problems"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT is commonly used to address psychological and emotional issues such as trauma, PTSD, anxiety, depression, and emotional regulation difficulties."
+                },
+                {
+                    "question": "What should professional documentation of an ETT session include?",
+                    "options": [
+                        "Only what techniques were used",
+                        "Client presentation, interventions used, client response, progress, and plan",
+                        "Just the diagnosis",
+                        "Only billing information"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Comprehensive documentation should include the client's presentation, specific interventions used, the client's response, progress toward goals, safety considerations, and the ongoing treatment plan."
+                },
+                {
+                    "question": "How should previous module learnings be synthesized in case conceptualization?",
+                    "options": [
+                        "They shouldn't be - each module is separate",
+                        "By integrating attachment theory, neuroscience, techniques, ethics, and evidence into a coherent treatment approach",
+                        "Only use the most recent module",
+                        "Pick one favorite module to apply"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Effective case conceptualization synthesizes learning from all modules - attachment theory, neuroscience, specific techniques, ethical considerations, and research evidence - into a coherent, individualized treatment approach."
+                }
+            ]
+        },
+        {
+            "week": 6,
+            "module_number": 10,
+            "title": "Final Review and Certification Preparation",
+            "description": "The final module reviews key concepts and ensures readiness for certification. Students engage in synthesis activities and comprehensive assessment.",
+            "learning_objectives": [
+                "Review and consolidate learning objectives from all modules",
+                "Demonstrate mastery through a comprehensive final assessment",
+                "Identify remaining knowledge gaps and create a personal study plan",
+                "Understand the steps to obtain ETT certification and continuing education opportunities"
+            ],
+            "topics_covered": [
+                "Recap of ETT core concepts, techniques, and ethical guidelines",
+                "Sample certification exam questions and case vignettes",
+                "Study strategies for continued professional development",
+                "Administrative steps: certificate issuance and next-level training options"
+            ],
+            "estimated_time": "3 hours",
+            "quiz_questions": [
+                {
+                    "question": "Which of the following best summarizes the ETT approach?",
+                    "options": [
+                        "A purely cognitive therapy",
+                        "Integration of psychotherapy with light, color, and eye movement techniques for rapid emotional transformation",
+                        "Only medication management",
+                        "Physical therapy only"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT integrates traditional psychotherapy with light, color, and eye movement techniques to facilitate rapid emotional transformation."
+                },
+                {
+                    "question": "What is required to practice ETT professionally?",
+                    "options": [
+                        "Only completing this course",
+                        "Licensed mental health professional status plus ETT certification and ongoing education",
+                        "No specific requirements",
+                        "Just reading about ETT"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT practice requires being a licensed mental health professional, completing appropriate ETT certification training, and engaging in ongoing professional development."
+                },
+                {
+                    "question": "Which professional organizations recognize ETT continuing education?",
+                    "options": [
+                        "None",
+                        "ICF (International Coach Federation) and NBCC (National Board for Certified Counselors)",
+                        "Only local organizations",
+                        "Only medical boards"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "ETT continuing education is recognized by ICF and NBCC, among other professional organizations."
+                },
+                {
+                    "question": "What is the next step after completing the ETT Foundational Course?",
+                    "options": [
+                        "Immediately start practicing without supervision",
+                        "Consider advanced training levels (ETT Level 1, 2, etc.) based on your professional track",
+                        "No further training needed",
+                        "Switch to a different therapy approach"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "After the foundational course, practitioners should pursue advanced ETT training levels appropriate to their professional track (Wellness or Clinical) and practice under supervision."
+                },
+                {
+                    "question": "What is a key ethical consideration emphasized throughout the ETT curriculum?",
+                    "options": [
+                        "Maximizing profit",
+                        "Client safety, informed consent, and practicing within scope of competence",
+                        "Treating as many clients as possible",
+                        "Using only one technique for all clients"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Key ethical considerations in ETT include prioritizing client safety, obtaining informed consent, practicing within one's scope of competence, and individualizing treatment."
+                },
+                {
+                    "question": "What should a practitioner do if they encounter a situation beyond their current ETT competency?",
+                    "options": [
+                        "Proceed anyway",
+                        "Seek supervision, consultation, or refer to a more experienced practitioner",
+                        "Ignore the situation",
+                        "Try random techniques"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Ethical practice requires seeking supervision or consultation, or referring to a more experienced practitioner when encountering situations beyond one's current competency level."
+                }
+            ]
+        }
+    ]
+    
+    modules = []
+    for module_data in modules_data:
+        # Create quiz questions
+        quiz_questions = []
+        for q in module_data["quiz_questions"]:
+            quiz_questions.append(QuizQuestion(**q))
+        
+        # Create module
+        module = Module(
+            course_id=course_id,
+            week=module_data["week"],
+            module_number=module_data["module_number"],
+            title=module_data["title"],
+            description=module_data["description"],
+            learning_objectives=module_data["learning_objectives"],
+            topics_covered=module_data["topics_covered"],
+            estimated_time=module_data["estimated_time"],
+            assessment=ModuleAssessment(
+                quiz_questions=quiz_questions,
+                passing_score=0.8
+            )
+        )
+        modules.append(module)
+        await db.modules.insert_one(module.model_dump())
+    
+    return {"message": f"Seeded {len(modules)} modules for ETT Foundational Course"}
+
 # ============ HEALTH CHECK ============
 
 @api_router.get("/")
