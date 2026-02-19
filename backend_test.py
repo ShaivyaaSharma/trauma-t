@@ -207,7 +207,7 @@ class TTIAPITester:
         return success
 
     def test_create_enrollment(self):
-        """Create a paid enrollment for testing using API call to database"""
+        """Create a paid enrollment for testing"""
         # First get ETT Foundational Course ID
         success, courses = self.run_test("Get Courses for Enrollment", "GET", "courses", 200)
         if not success or not courses:
@@ -228,50 +228,26 @@ class TTIAPITester:
         
         print(f"   Found ETT Foundational Course: {self.course_id}")
         
-        # Create enrollment using direct API call to internal endpoint
+        # Create enrollment directly via MongoDB
         try:
-            enrollment_data = {
-                "id": f"enroll_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
-                "user_id": self.user_id,
-                "course_id": self.course_id,
-                "payment_status": "paid",
-                "enrolled_at": datetime.now().isoformat()
-            }
+            enrollment_id = f"enroll_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             
-            # Make a direct POST request to create enrollment
-            import requests
-            url = f"{self.base_url}/api/test/create-enrollment"
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {self.token}'
-            }
+            mongo_cmd = f'''mongosh "mongodb://localhost:27017/tti_db" --quiet --eval "db.enrollments.insertOne({{id: '{enrollment_id}', user_id: '{self.user_id}', course_id: '{self.course_id}', payment_status: 'paid', enrolled_at: '{datetime.now().isoformat()}'}});"'''
             
-            response = requests.post(url, json=enrollment_data, headers=headers, timeout=30)
+            result = subprocess.run(
+                mongo_cmd,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
             
-            if response.status_code == 201 or response.status_code == 200:
+            if result.returncode == 0:
                 print("✅ Paid enrollment created successfully")
                 return True
             else:
-                # Try direct MongoDB insertion as fallback
-                print("   Trying direct database insertion...")
-                
-                # Use mongosh to insert enrollment
-                mongo_cmd = f'''mongosh "mongodb://localhost:27017/tti_db" --quiet --eval "db.enrollments.insertOne({{id: '{enrollment_data['id']}', user_id: '{self.user_id}', course_id: '{self.course_id}', payment_status: 'paid', enrolled_at: '{enrollment_data['enrolled_at']}'}});"'''
-                
-                result = subprocess.run(
-                    mongo_cmd,
-                    shell=True,
-                    capture_output=True,
-                    text=True,
-                    timeout=30
-                )
-                
-                if result.returncode == 0:
-                    print("✅ Enrollment created via MongoDB")
-                    return True
-                else:
-                    print(f"❌ Failed to create enrollment: {result.stderr}")
-                    return False
+                print(f"❌ Failed to create enrollment: {result.stderr}")
+                return False
                 
         except Exception as e:
             print(f"❌ Enrollment creation failed: {e}")
