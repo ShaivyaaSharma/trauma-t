@@ -742,8 +742,8 @@ class TTIAPITester:
             return False
 
 def main():
-    """Main test runner"""
-    print("🚀 Starting TTI API Testing...")
+    """Main test runner for gamified learning module system"""
+    print("🚀 Starting TTI Gamified Learning API Testing...")
     print("=" * 60)
     
     tester = TTIAPITester()
@@ -753,38 +753,85 @@ def main():
         print("❌ API is not responding, stopping tests")
         return 1
     
-    # Seed data first
+    print("\n📚 GAMIFIED LEARNING MODULE TESTING")
+    print("-" * 40)
+    
+    # 1. Data Seeding (Prerequisites)
+    print("\n1️⃣ SEEDING TEST DATA")
     tester.test_seed_data()
+    tester.test_seed_modules()
     
-    # Test courses endpoints (no auth required)
-    tester.test_get_courses()
-    tester.test_get_wellness_courses()
-    tester.test_get_clinical_courses()
-    tester.test_get_single_course()
-    
-    # Test authentication flow
+    # 2. Authentication Setup
+    print("\n2️⃣ USER AUTHENTICATION")
     if not tester.test_signup():
         print("❌ Signup failed, trying existing user login")
         if not tester.test_login():
-            print("❌ Both signup and login failed, skipping auth tests")
-        else:
-            # Test authenticated endpoints
-            tester.test_get_me()
-            tester.test_get_my_enrollments()
-    else:
-        # Test authenticated endpoints after successful signup
-        tester.test_get_me()
-        tester.test_get_my_enrollments()
-        
-        # Test login with same credentials
-        tester.test_login()
+            print("❌ Authentication failed completely")
+            return 1
     
-    # Print results
+    tester.test_get_me()
+    
+    # 3. Create Enrollment
+    print("\n3️⃣ ENROLLMENT SETUP")
+    if not tester.test_create_enrollment():
+        print("❌ Failed to create enrollment, skipping module tests")
+        return 1
+    
+    # 4. Module Listing Tests
+    print("\n4️⃣ MODULE LISTING")
+    if not tester.test_module_listing():
+        print("❌ Module listing failed")
+        return 1
+    
+    # 5. Module Detail Tests  
+    print("\n5️⃣ MODULE DETAIL ACCESS")
+    if not tester.test_module_detail():
+        print("❌ Module detail tests failed")
+        return 1
+    
+    # 6. Quiz Retrieval Tests
+    print("\n6️⃣ QUIZ RETRIEVAL")
+    if not tester.test_quiz_retrieval():
+        print("❌ Quiz retrieval failed")
+        return 1
+    
+    # 7. Quiz Submission Tests
+    print("\n7️⃣ QUIZ SUBMISSION & GRADING")
+    if not tester.test_quiz_submission_passing():
+        print("❌ Passing quiz submission failed")
+        return 1
+    
+    # 8. Module Progression Flow
+    print("\n8️⃣ MODULE PROGRESSION FLOW")
+    if not tester.test_module_progression_flow():
+        print("❌ Module progression failed")
+        return 1
+    
+    # 9. Quiz Retry Tests
+    print("\n9️⃣ QUIZ RETRY FUNCTIONALITY")
+    if not tester.test_quiz_retry_functionality():
+        print("❌ Quiz retry functionality failed")
+        return 1
+    
+    # 10. Progress Tracking
+    print("\n🔟 PROGRESS TRACKING")
+    if not tester.test_progress_tracking():
+        print("❌ Progress tracking failed")
+        return 1
+    
+    # 11. Security Tests
+    print("\n🔒 SECURITY TESTS")
+    if not tester.test_unenrolled_user_access():
+        print("❌ Security tests failed")
+        return 1
+    
+    # Print final results
     print("\n" + "=" * 60)
-    print(f"📊 Test Results: {tester.tests_passed}/{tester.tests_run} passed")
+    print(f"📊 GAMIFIED LEARNING TEST RESULTS")
+    print(f"Total: {tester.tests_passed}/{tester.tests_run} passed")
     
     if tester.tests_passed == tester.tests_run:
-        print("🎉 All tests passed!")
+        print("🎉 ALL GAMIFIED LEARNING TESTS PASSED!")
         return 0
     else:
         failed = tester.tests_run - tester.tests_passed
