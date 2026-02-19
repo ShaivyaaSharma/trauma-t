@@ -199,7 +199,7 @@ class TTIAPITester:
         return success
 
     def test_create_enrollment(self):
-        """Create a paid enrollment for testing"""
+        """Create a paid enrollment for testing using direct MongoDB access"""
         # First get ETT Foundational Course ID
         success, courses = self.run_test("Get Courses for Enrollment", "GET", "courses", 200)
         if not success or not courses:
@@ -220,19 +220,45 @@ class TTIAPITester:
         
         print(f"   Found ETT Foundational Course: {self.course_id}")
         
-        # Create a direct paid enrollment (bypassing Stripe for testing)
-        enrollment_data = {
-            "user_id": self.user_id,
-            "course_id": self.course_id,
-            "payment_status": "paid",
-            "enrolled_at": datetime.now().isoformat()
-        }
-        
-        # Direct database insertion for testing
-        print("   Creating paid enrollment directly...")
-        success = True
-        print("✅ Enrollment created successfully")
-        return success
+        # Use MongoDB to create enrollment directly for testing
+        try:
+            import subprocess
+            import json
+            
+            # Create enrollment document
+            enrollment_doc = {
+                "id": f"enroll_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                "user_id": self.user_id,
+                "course_id": self.course_id, 
+                "payment_status": "paid",
+                "enrolled_at": datetime.now().isoformat()
+            }
+            
+            # Insert directly into MongoDB
+            mongo_cmd = f"""
+            mongosh --quiet --eval "
+            use tti_db;
+            db.enrollments.insertOne({json.dumps(enrollment_doc)});
+            "
+            """
+            
+            result = subprocess.run(
+                ["bash", "-c", mongo_cmd], 
+                capture_output=True, 
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode == 0:
+                print("✅ Paid enrollment created successfully")
+                return True
+            else:
+                print(f"❌ MongoDB insertion failed: {result.stderr}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Enrollment creation failed: {e}")
+            return False
 
     def test_module_listing(self):
         """Test GET /api/courses/{courseId}/modules"""
