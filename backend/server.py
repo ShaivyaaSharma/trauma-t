@@ -471,6 +471,314 @@ async def get_my_enrollments(user: dict = Depends(get_current_user)):
     
     return result
 
+# ============ LEARNING MODULE ROUTES ============
+
+@api_router.get("/courses/{course_id}/modules")
+async def get_course_modules(course_id: str, user: dict = Depends(get_current_user)):
+    """Get all modules for a course with user's progress"""
+    # Check if user is enrolled
+    enrollment = await db.enrollments.find_one({
+        "user_id": user["id"],
+        "course_id": course_id,
+        "payment_status": "paid"
+    })
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+    
+    # Get all modules for the course
+    modules = await db.modules.find({"course_id": course_id}, {"_id": 0}).sort("module_number", 1).to_list(100)
+    
+    # Get user's progress for all modules
+    progress_records = await db.module_progress.find({
+        "user_id": user["id"],
+        "course_id": course_id
+    }, {"_id": 0}).to_list(100)
+    
+    # Create a map of module_id -> progress
+    progress_map = {p["module_id"]: p for p in progress_records}
+    
+    # Combine modules with progress
+    result = []
+    for module in modules:
+        progress = progress_map.get(module["id"], {
+            "is_unlocked": module["module_number"] == 1,  # First module is unlocked by default
+            "is_completed": False,
+            "quiz_attempts": 0,
+            "best_score": 0.0
+        })
+        result.append({
+            **module,
+            "progress": progress
+        })
+    
+    return result
+
+@api_router.get("/courses/{course_id}/modules/{module_id}")
+async def get_module_detail(course_id: str, module_id: str, user: dict = Depends(get_current_user)):
+    """Get detailed module content"""
+    # Check enrollment
+    enrollment = await db.enrollments.find_one({
+        "user_id": user["id"],
+        "course_id": course_id,
+        "payment_status": "paid"
+    })
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+    
+    # Get module
+    module = await db.modules.find_one({"id": module_id, "course_id": course_id}, {"_id": 0})
+    if not module:
+        raise HTTPException(status_code=404, detail="Module not found")
+    
+    # Get or create progress
+    progress = await db.module_progress.find_one({
+        "user_id": user["id"],
+        "module_id": module_id
+    }, {"_id": 0})
+    
+    if not progress:
+        # Check if this is the first module or if previous module is completed
+        if module["module_number"] == 1:
+            is_unlocked = True
+        else:
+            # Get previous module
+            prev_module = await db.modules.find_one({
+                "course_id": course_id,
+                "module_number": module["module_number"] - 1
+            }, {"_id": 0})
+            
+            if prev_module:
+                prev_progress = await db.module_progress.find_one({
+                    "user_id": user["id"],
+                    "module_id": prev_module["id"],
+                    "is_completed": True
+                }, {"_id": 0})
+                is_unlocked = prev_progress is not None
+            else:
+                is_unlocked = False
+        
+        # Create progress record
+        progress = ModuleProgress(
+            user_id=user["id"],
+            course_id=course_id,
+            module_id=module_id,
+            is_unlocked=is_unlocked
+        ).model_dump()
+        await db.module_progress.insert_one(progress)
+        progress.pop("_id", None)
+    
+    # Check if module is unlocked
+    if not progress["is_unlocked"]:
+        raise HTTPException(status_code=403, detail="Module is locked. Complete previous module first.")
+    
+    return {
+        **module,
+        "progress": progress
+    }
+
+@api_router.get("/courses/{course_id}/modules/{module_id}/quiz")
+async def get_module_quiz(course_id: str, module_id: str, user: dict = Depends(get_current_user)):
+    """Get quiz questions for a module (without correct answers)"""
+    # Check enrollment
+    enrollment = await db.enrollments.find_one({
+        "user_id": user["id"],
+        "course_id": course_id,
+        "payment_status": "paid"
+    })
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+    
+    # Get module
+    module = await db.modules.find_one({"id": module_id, "course_id": course_id}, {"_id": 0})
+    if not module:
+        raise HTTPException(status_code=404, detail="Module not found")
+    
+    # Check if module is unlocked
+    progress = await db.module_progress.find_one({
+        "user_id": user["id"],
+        "module_id": module_id
+    }, {"_id": 0})
+    
+    if not progress or not progress.get("is_unlocked"):
+        raise HTTPException(status_code=403, detail="Module is locked")
+    
+    # Return quiz questions without correct answers
+    quiz_questions = []
+    for q in module["assessment"]["quiz_questions"]:
+        quiz_questions.append({
+            "id": q["id"],
+            "question": q["question"],
+            "options": q["options"]
+        })
+    
+    return {
+        "module_id": module_id,
+        "module_title": module["title"],
+        "questions": quiz_questions,
+        "passing_score": module["assessment"]["passing_score"],
+        "attempts": progress.get("quiz_attempts", 0),
+        "best_score": progress.get("best_score", 0.0)
+    }
+
+@api_router.post("/courses/{course_id}/modules/{module_id}/submit-quiz")
+async def submit_quiz(
+    course_id: str,
+    module_id: str,
+    submission: QuizSubmission,
+    user: dict = Depends(get_current_user)
+):
+    """Submit quiz answers and get results"""
+    # Check enrollment
+    enrollment = await db.enrollments.find_one({
+        "user_id": user["id"],
+        "course_id": course_id,
+        "payment_status": "paid"
+    })
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+    
+    # Get module
+    module = await db.modules.find_one({"id": module_id, "course_id": course_id}, {"_id": 0})
+    if not module:
+        raise HTTPException(status_code=404, detail="Module not found")
+    
+    # Get progress
+    progress = await db.module_progress.find_one({
+        "user_id": user["id"],
+        "module_id": module_id
+    }, {"_id": 0})
+    
+    if not progress or not progress.get("is_unlocked"):
+        raise HTTPException(status_code=403, detail="Module is locked")
+    
+    # Grade the quiz
+    questions = module["assessment"]["quiz_questions"]
+    if len(submission.answers) != len(questions):
+        raise HTTPException(status_code=400, detail="Invalid number of answers")
+    
+    correct_count = 0
+    questions_review = []
+    
+    for i, (user_answer, question) in enumerate(zip(submission.answers, questions)):
+        is_correct = user_answer == question["correct_answer"]
+        if is_correct:
+            correct_count += 1
+        
+        questions_review.append({
+            "question_number": i + 1,
+            "question": question["question"],
+            "user_answer": question["options"][user_answer] if 0 <= user_answer < len(question["options"]) else "No answer",
+            "correct_answer": question["options"][question["correct_answer"]],
+            "is_correct": is_correct,
+            "explanation": question.get("explanation", "")
+        })
+    
+    score = correct_count / len(questions)
+    passed = score >= module["assessment"]["passing_score"]
+    
+    # Update progress
+    update_data = {
+        "quiz_attempts": progress.get("quiz_attempts", 0) + 1,
+        "last_attempt_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if score > progress.get("best_score", 0):
+        update_data["best_score"] = score
+    
+    if passed and not progress.get("is_completed"):
+        update_data["is_completed"] = True
+        update_data["completed_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Unlock next module
+        next_module = await db.modules.find_one({
+            "course_id": course_id,
+            "module_number": module["module_number"] + 1
+        }, {"_id": 0})
+        
+        if next_module:
+            # Check if progress exists for next module
+            next_progress = await db.module_progress.find_one({
+                "user_id": user["id"],
+                "module_id": next_module["id"]
+            })
+            
+            if next_progress:
+                await db.module_progress.update_one(
+                    {"user_id": user["id"], "module_id": next_module["id"]},
+                    {"$set": {"is_unlocked": True}}
+                )
+            else:
+                next_progress_doc = ModuleProgress(
+                    user_id=user["id"],
+                    course_id=course_id,
+                    module_id=next_module["id"],
+                    is_unlocked=True
+                ).model_dump()
+                await db.module_progress.insert_one(next_progress_doc)
+    
+    await db.module_progress.update_one(
+        {"user_id": user["id"], "module_id": module_id},
+        {"$set": update_data}
+    )
+    
+    return QuizResult(
+        score=score,
+        total_questions=len(questions),
+        correct_answers=correct_count,
+        passed=passed,
+        questions_review=questions_review
+    )
+
+@api_router.get("/courses/{course_id}/progress")
+async def get_course_progress(course_id: str, user: dict = Depends(get_current_user)):
+    """Get user's overall progress in a course"""
+    # Check enrollment
+    enrollment = await db.enrollments.find_one({
+        "user_id": user["id"],
+        "course_id": course_id,
+        "payment_status": "paid"
+    })
+    if not enrollment:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+    
+    # Get total modules
+    total_modules = await db.modules.count_documents({"course_id": course_id})
+    
+    # Get completed modules
+    completed_count = await db.module_progress.count_documents({
+        "user_id": user["id"],
+        "course_id": course_id,
+        "is_completed": True
+    })
+    
+    # Find current module (first unlocked, not completed)
+    current_progress = await db.module_progress.find_one({
+        "user_id": user["id"],
+        "course_id": course_id,
+        "is_unlocked": True,
+        "is_completed": False
+    }, {"_id": 0})
+    
+    if current_progress:
+        current_module_doc = await db.modules.find_one(
+            {"id": current_progress["module_id"]},
+            {"_id": 0}
+        )
+        current_module = current_module_doc["module_number"] if current_module_doc else 1
+    else:
+        # If all completed or none started
+        current_module = completed_count + 1 if completed_count < total_modules else total_modules
+    
+    overall_progress = (completed_count / total_modules * 100) if total_modules > 0 else 0
+    
+    return UserProgressSummary(
+        course_id=course_id,
+        total_modules=total_modules,
+        completed_modules=completed_count,
+        current_module=current_module,
+        overall_progress=overall_progress
+    )
+
 # ============ SEED DATA ============
 
 @api_router.post("/seed")
