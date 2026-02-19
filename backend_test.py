@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 class TTIAPITester:
-    def __init__(self, base_url="https://ett-india.preview.emergentagent.com"):
+    def __init__(self, base_url="http://localhost:8001"):  # Use internal URL for testing
         self.base_url = base_url
         self.token = None
         self.user_id = None
