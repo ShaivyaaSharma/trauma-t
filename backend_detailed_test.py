@@ -176,7 +176,12 @@ class TTIDetailedTester:
         print(f"   Module 3 has {num_questions} questions, need {correct_answers_needed} correct for 80%")
         
         # Create answer pattern for exactly 80%
-        exact_80_answers = [1] * correct_answers_needed + [0] * (num_questions - correct_answers_needed)
+        # Module 3 correct answers: [1, 1, 1, 2, 1] - use first 4 correct, last wrong
+        if num_questions == 5:
+            exact_80_answers = [1, 1, 1, 2, 0]  # 4/5 = 80%
+        else:
+            # General case: use correct answers up to 80%
+            exact_80_answers = [1] * correct_answers_needed + [0] * (num_questions - correct_answers_needed)
         
         success, result = self.run_test(
             "Submit Quiz (Exactly 80%)",
