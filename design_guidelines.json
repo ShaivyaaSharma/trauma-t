@@ -1,0 +1,155 @@
+{
+  "identity": {
+    "name": "E1",
+    "role": "Anti-AI Creative Designer",
+    "mission": "Create a 'Clinical Serenity' aesthetic that balances medical rigor with human warmth. Avoid generic SaaS templates."
+  },
+  "typography": {
+    "fonts": [
+      {
+        "family": "Playfair Display",
+        "url": "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap",
+        "usage": "Headings, Hero Titles, Quotes (The 'Institute' Voice)"
+      },
+      {
+        "family": "DM Sans",
+        "url": "https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap",
+        "usage": "Body text, UI elements, Buttons, Navigation (The 'Modern Clinical' Voice)"
+      }
+    ],
+    "rules": {
+      "headings": "font-playfair font-semibold tracking-tight leading-tight text-primary",
+      "body": "font-dm-sans text-base leading-relaxed text-muted-foreground",
+      "labels": "font-dm-sans text-xs font-bold tracking-wider uppercase text-muted-foreground/80",
+      "hero": "text-5xl md:text-7xl font-playfair font-bold tracking-tighter"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "hex": "#0F172A",
+        "hsl": "222.2 47.4% 11.2%",
+        "usage": "Main Brand Color, Headings, Primary Buttons (Navy Blue)"
+      },
+      "secondary": {
+        "hex": "#F1F5F9",
+        "hsl": "210 40% 96.1%",
+        "usage": "Backgrounds, Secondary Buttons, Card Hover States (Soft Blue-Grey)"
+      },
+      "accent": {
+        "hex": "#0EA5E9",
+        "hsl": "199 89% 48%",
+        "usage": "Active States, Links, Highlights (Calm Sky Blue - sparingly used)"
+      },
+      "background": {
+        "hex": "#FFFFFF",
+        "hsl": "0 0% 100%",
+        "usage": "Page Backgrounds"
+      },
+      "muted": {
+        "hex": "#F8FAFC",
+        "hsl": "210 40% 98%",
+        "usage": "Card Backgrounds"
+      }
+    },
+    "theme_setup": {
+      "mode": "light",
+      "css_vars": {
+        "--background": "0 0% 100%",
+        "--foreground": "222.2 84% 4.9%",
+        "--card": "0 0% 100%",
+        "--card-foreground": "222.2 84% 4.9%",
+        "--popover": "0 0% 100%",
+        "--popover-foreground": "222.2 84% 4.9%",
+        "--primary": "222.2 47.4% 11.2%",
+        "--primary-foreground": "210 40% 98%",
+        "--secondary": "210 40% 96.1%",
+        "--secondary-foreground": "222.2 47.4% 11.2%",
+        "--muted": "210 40% 96.1%",
+        "--muted-foreground": "215.4 16.3% 46.9%",
+        "--accent": "210 40% 96.1%",
+        "--accent-foreground": "222.2 47.4% 11.2%",
+        "--destructive": "0 84.2% 60.2%",
+        "--destructive-foreground": "210 40% 98%",
+        "--border": "214.3 31.8% 91.4%",
+        "--input": "214.3 31.8% 91.4%",
+        "--ring": "222.2 84% 4.9%",
+        "--radius": "0.3rem"
+      }
+    }
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "card": "shadow-[0_2px_8px_rgba(15,23,42,0.08)]",
+      "hover": "hover:shadow-[0_8px_24px_rgba(15,23,42,0.12)]",
+      "glass": "shadow-[0_8px_32px_rgba(0,0,0,0.04)]"
+    },
+    "borders": {
+      "default": "border border-slate-200",
+      "subtle": "border-b border-slate-100"
+    },
+    "glassmorphism": {
+      "nav": "bg-white/80 backdrop-blur-md border-b border-white/20",
+      "card": "bg-white/60 backdrop-blur-sm border border-white/40"
+    },
+    "textures": {
+      "noise": "url('data:image/svg+xml,...') opacity-5"
+    }
+  },
+  "layout_strategies": {
+    "landing_page": {
+      "structure": "Split Choice Hero",
+      "description": "Two distinct vertical panels for 'Wellness' vs 'Clinical'. Hovering one expands it (60%) and compresses the other (40%).",
+      "grid": "grid-cols-1 md:grid-cols-2 h-[80vh] md:h-screen"
+    },
+    "course_catalog": {
+      "structure": "Bento Grid",
+      "description": "Mix of 1x1 course cards and 2x1 feature highlights.",
+      "grid": "grid-cols-1 md:grid-cols-3 gap-6"
+    },
+    "dashboard": {
+      "structure": "Sidebar + Density",
+      "description": "Fixed sidebar, scrollable content area. High density data display for enrolled courses.",
+      "grid": "flex h-screen overflow-hidden"
+    }
+  },
+  "images": {
+    "hero_wellness": "https://images.unsplash.com/photo-1764386240887-a97595e90987?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzN8MHwxfHNlYXJjaHwyfHxwZWFjZWZ1bCUyMGJsdWUlMjBhYnN0cmFjdCUyMHRleHR1cmV8ZW58MHx8fHwxNzcxNTIxNTQzfDA&ixlib=rb-4.1.0&q=85",
+    "hero_clinical": "https://images.pexels.com/photos/3518623/pexels-photo-3518623.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "therapy_session": "https://images.pexels.com/photos/7579310/pexels-photo-7579310.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "couple_therapy": "https://images.pexels.com/photos/8560651/pexels-photo-8560651.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "abstract_calm": "https://images.unsplash.com/photo-1759744882028-30b8e79836d3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzN8MHwxfHNlYXJjaHw0fHxwZWFjZWZ1bCUyMGJsdWUlMjBhYnN0cmFjdCUyMHRleHR1cmV8ZW58MHx8fHwxNzcxNTIxNTQzfDA&ixlib=rb-4.1.0&q=85",
+    "logo_placeholder": "https://via.placeholder.com/150x50?text=TTI+India"
+  },
+  "component_rules": {
+    "Button": {
+      "default": "rounded-sm font-dm-sans font-medium tracking-wide transition-all duration-300",
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] shadow-sm",
+      "outline": "border-2 border-primary text-primary hover:bg-primary/5",
+      "ghost": "hover:bg-slate-100 text-slate-600"
+    },
+    "Card": {
+      "base": "rounded-lg border border-slate-100 bg-white shadow-card hover:shadow-hover transition-all duration-500 ease-out group",
+      "content": "p-6 md:p-8"
+    },
+    "Input": {
+      "base": "rounded-sm border-slate-200 bg-slate-50 focus:bg-white focus:border-primary transition-colors h-12 font-dm-sans"
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. THEME SETUP: Update `tailwind.config.js` and `index.css` FIRST with the HSL values provided in `colors`. This is critical for the Navy/Blue theme.",
+    "2. FONT SETUP: Import Google Fonts (Playfair Display and DM Sans) in `index.css` or `index.html`. Do NOT use default system fonts.",
+    "3. LANDING PAGE: Build the 'Split Pathway' interaction. Users must choose 'Wellness' or 'Clinical' to proceed. This is the core UX.",
+    "4. COMPONENTS: Use existing Shadcn components but apply the 'Visual Enhancers' classes. Don't leave them default.",
+    "5. DATA-TESTID: Add `data-testid` to all buttons, inputs, and cards.",
+    "6. IMAGES: Use the provided image URLs. Do NOT use placeholders unless specified.",
+    "7. MOTION: Use `framer-motion` for the split screen effect and page transitions."
+  ],
+  "universal_guidelines": [
+    "Avoid generic 'SaaS Blue' gradients. Use solid, deep Navy (#0F172A) and clean White.",
+    "Use 2x more padding than you think is necessary. 'Clinical Serenity' requires breathing room.",
+    "Never center text in cards. Left align for readability.",
+    "Use 'Sonner' for all toast notifications.",
+    "Ensure 'Coming Soon' badges are visually distinct (e.g., subtle grey background with lock icon)."
+  ]
+}
