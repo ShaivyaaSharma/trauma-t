@@ -205,6 +205,16 @@ const DashboardPage = () => {
                             <Badge className="bg-emerald-100 text-emerald-700 font-dm-sans">
                               Enrolled
                             </Badge>
+                            {item.course.title === 'ETT Foundational Course' && (
+                              <Button 
+                                size="sm"
+                                className="bg-sky hover:bg-sky/90 font-dm-sans"
+                                onClick={() => navigate(`/courses/${item.course.id}/learn`)}
+                              >
+                                <BookOpen className="w-3 h-3 mr-1" />
+                                Start Learning
+                              </Button>
+                            )}
                             <Button 
                               variant="outline" 
                               size="sm"
