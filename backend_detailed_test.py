@@ -124,7 +124,7 @@ class TTIDetailedTester:
                     print("   ✅ Module 1 completed, Module 2 should be unlocked")
                     return True
                 else:
-                    print("   ❌ Failed to complete Module 1")
+                    print(f"   ❌ Failed to complete Module 1 (score: {result.get('score', 0):.1%})")
                     return False
                 
         except Exception as e:
