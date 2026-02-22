@@ -147,6 +147,35 @@ const ModuleContentPage = () => {
           </TabsList>
           
           <TabsContent value="content" className="mt-6">
+            {/* Concept Explanation */}
+            {module.concept_explanation && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle>Concept Explanation</CardTitle>
+                  <CardDescription>
+                    Core concepts and theoretical framework
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose max-w-none">
+                    <p className="text-gray-700 whitespace-pre-line">{module.concept_explanation}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Instructor Script */}
+            {module.instructor_script && (
+              <Card className="mb-6 bg-blue-50 border-blue-200">
+                <CardHeader>
+                  <CardTitle className="text-blue-900">Instructor Insight</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-blue-800 italic">"{module.instructor_script}"</p>
+                </CardContent>
+              </Card>
+            )}
+
             <Card>
               <CardHeader>
                 <CardTitle>Learning Objectives</CardTitle>
@@ -178,6 +207,88 @@ const ModuleContentPage = () => {
                   {module.topics_covered?.map((topic, index) => (
                     <li key={index} className="flex items-start">
                       <div className="h-2 w-2 bg-primary rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-700">{topic}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Student Activities */}
+            {module.student_activities && module.student_activities.length > 0 && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>Student Activities</CardTitle>
+                  <CardDescription>
+                    Practical exercises to enhance learning
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {module.student_activities.map((activity, index) => (
+                      <li key={index} className="flex items-start">
+                        <div className="h-2 w-2 bg-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                        <span className="text-gray-700">{activity}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Exercises */}
+            {module.exercises && module.exercises.length > 0 && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>Guided Exercises</CardTitle>
+                  <CardDescription>
+                    Step-by-step practical exercises
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {module.exercises.map((exercise, index) => (
+                      <div key={index} className="border-l-4 border-purple-500 pl-4 py-2">
+                        <h4 className="font-semibold text-gray-900 mb-1">{exercise.name}</h4>
+                        <p className="text-sm text-gray-600 mb-2">
+                          <strong>Type:</strong> {exercise.type?.replace(/_/g, ' ')} | <strong>Duration:</strong> {exercise.duration}
+                        </p>
+                        <p className="text-gray-700">{exercise.instructions}</p>
+                        {exercise.outcome && (
+                          <p className="text-sm text-green-700 mt-2"><strong>Expected Outcome:</strong> {exercise.outcome}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Expected Outcome */}
+            {module.expected_outcome && (
+              <Card className="mt-6 bg-green-50 border-green-200">
+                <CardHeader>
+                  <CardTitle className="text-green-900">Expected Learning Outcome</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-green-800">{module.expected_outcome}</p>
+                </CardContent>
+              </Card>
+            )}
+            
+            <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Ready to Test Your Knowledge?
+              </h3>
+              <p className="text-gray-700 mb-4">
+                Once you've reviewed the content, take the assessment to demonstrate your understanding. 
+                You need to score at least {(module.assessment?.passing_score * 100)}% to pass and unlock the next module.
+              </p>
+              <Button onClick={() => setActiveTab('assessment')}>
+                Start Assessment
+              </Button>
+            </div>
+          </TabsContent>
                       <span className="text-gray-700">{topic}</span>
                     </li>
                   ))}
