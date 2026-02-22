@@ -15,14 +15,12 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3" data-testid="logo-link">
-              <div className="w-10 h-10 bg-navy-900 rounded-sm flex items-center justify-center">
-                <span className="text-white font-playfair font-bold text-lg">T</span>
-              </div>
+              <img src="/home-logo.svg" alt="TTI Logo" className="h-12 w-auto" />
               <div>
-                <span className="font-playfair font-semibold text-navy-900 text-lg tracking-tight">
+                <span className="font-playfair font-semibold text-mindful-800 text-lg tracking-tight">
                   Trauma Transformation Institute
                 </span>
-                <span className="block text-xs text-muted-foreground font-dm-sans">ETT India</span>
+                <span className="block text-xs text-sage-600 font-dm-sans">ETT India</span>
               </div>
             </Link>
             
