@@ -979,6 +979,9 @@ async def seed_modules():
     # Clear existing modules for this course
     await db.modules.delete_many({"course_id": course_id})
     
+    # Import detailed modules content
+    from detailed_modules_content import DETAILED_MODULES
+    
     modules_data = [
         {
             "week": 1,
