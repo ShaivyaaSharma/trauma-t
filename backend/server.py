@@ -92,7 +92,8 @@ class CourseCreate(BaseModel):
     duration: str
     location: str
     schedule: str
-    instructor: str = "ETT Certified Trainer"
+    start_date: Optional[str] = None  # User-selected start date
+    instructor: str = "Sonia Siddhu"
     max_participants: int = 20
     features: List[str] = []
     is_coming_soon: bool = False
