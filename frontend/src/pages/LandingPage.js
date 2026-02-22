@@ -10,9 +10,15 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 relative overflow-hidden">
+      {/* Decorative Soothing Lines Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <SoothingLines className="absolute top-0 left-0 w-full h-full text-blue-400" opacity={0.08} />
+        <SoothingLines className="absolute top-20 left-10 w-3/4 h-3/4 text-teal-400" opacity={0.05} />
+      </div>
+
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-slate-100">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-mindful-100 backdrop-blur-md">\
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3" data-testid="logo-link">
