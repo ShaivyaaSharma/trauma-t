@@ -30,39 +30,38 @@ const CourseLearningPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token && courseId) {
-      fetchData();
-    }
-  }, [token, courseId]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const headers = { Authorization: `Bearer ${token}` };
-      
-      // Fetch course details
-      const courseRes = await axios.get(`${API_URL}/api/courses/${courseId}`, { headers });
-      setCourse(courseRes.data);
-      
-      // Fetch modules with progress
-      const modulesRes = await axios.get(`${API_URL}/api/courses/${courseId}/modules`, { headers });
-      setModules(modulesRes.data);
-      
-      // Fetch overall progress
-      const progressRes = await axios.get(`${API_URL}/api/courses/${courseId}/progress`, { headers });
-      setProgress(progressRes.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      if (error.response?.status === 403) {
-        toast.error('You need to enroll in this course first');
-        navigate(`/courses/${courseId}`);
-      } else {
-        toast.error('Failed to load course content');
+    if (!token || !courseId) return;
+    let cancelled = false;
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const headers = { Authorization: `Bearer ${token}` };
+        
+        const courseRes = await axios.get(`${API_URL}/api/courses/${courseId}`, { headers });
+        if (!cancelled) setCourse(courseRes.data);
+        
+        const modulesRes = await axios.get(`${API_URL}/api/courses/${courseId}/modules`, { headers });
+        if (!cancelled) setModules(modulesRes.data);
+        
+        const progressRes = await axios.get(`${API_URL}/api/courses/${courseId}/progress`, { headers });
+        if (!cancelled) setProgress(progressRes.data);
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Error fetching data:', error);
+          if (error.response?.status === 403) {
+            toast.error('You need to enroll in this course first');
+            navigate(`/courses/${courseId}`);
+          } else {
+            toast.error('Failed to load course content');
+          }
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchData();
+    return () => { cancelled = true; };
+  }, [token, courseId, navigate]);
 
   const getModuleStatus = (module) => {
     const prog = module.progress || {};

@@ -29,29 +29,31 @@ const ModuleContentPage = () => {
   const [activeTab, setActiveTab] = useState('content');
 
   useEffect(() => {
-    if (token && courseId && moduleId) {
-      fetchModule();
-    }
-  }, [token, courseId, moduleId]);
-
-  const fetchModule = async () => {
-    try {
-      setLoading(true);
-      const headers = { Authorization: `Bearer ${token}` };
-      const res = await axios.get(`${API_URL}/api/courses/${courseId}/modules/${moduleId}`, { headers });
-      setModule(res.data);
-    } catch (error) {
-      console.error('Error fetching module:', error);
-      if (error.response?.status === 403) {
-        toast.error(error.response.data.detail || 'Module is locked');
-        navigate(`/courses/${courseId}/learn`);
-      } else {
-        toast.error('Failed to load module content');
+    if (!token || !courseId || !moduleId) return;
+    let cancelled = false;
+    const fetchModule = async () => {
+      try {
+        setLoading(true);
+        const headers = { Authorization: `Bearer ${token}` };
+        const res = await axios.get(`${API_URL}/api/courses/${courseId}/modules/${moduleId}`, { headers });
+        if (!cancelled) setModule(res.data);
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Error fetching module:', error);
+          if (error.response?.status === 403) {
+            toast.error(error.response.data.detail || 'Module is locked');
+            navigate(`/courses/${courseId}/learn`);
+          } else {
+            toast.error('Failed to load module content');
+          }
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    fetchModule();
+    return () => { cancelled = true; };
+  }, [token, courseId, moduleId, navigate]);
 
   const handleQuizComplete = () => {
     fetchModule();

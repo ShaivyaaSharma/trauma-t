@@ -28,27 +28,32 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+    const fetchQuiz = async () => {
+      try {
+        setLoading(true);
+        const headers = { Authorization: `Bearer ${token}` };
+        const res = await axios.get(
+          `${API_URL}/api/courses/${courseId}/modules/${moduleId}/quiz`,
+          { headers }
+        );
+        if (!cancelled) {
+          setQuiz(res.data);
+          setAnswers({});
+          setResult(null);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Error fetching quiz:', error);
+          toast.error('Failed to load quiz');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
     fetchQuiz();
-  }, [courseId, moduleId]);
-
-  const fetchQuiz = async () => {
-    try {
-      setLoading(true);
-      const headers = { Authorization: `Bearer ${token}` };
-      const res = await axios.get(
-        `${API_URL}/api/courses/${courseId}/modules/${moduleId}/quiz`,
-        { headers }
-      );
-      setQuiz(res.data);
-      setAnswers({});
-      setResult(null);
-    } catch (error) {
-      console.error('Error fetching quiz:', error);
-      toast.error('Failed to load quiz');
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => { cancelled = true; };
+  }, [courseId, moduleId, token]);
 
   const handleAnswerChange = (questionIndex, optionIndex) => {
     setAnswers(prev => ({

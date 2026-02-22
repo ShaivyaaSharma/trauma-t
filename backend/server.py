@@ -13,9 +13,14 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
-from emergentintegrations.payments.stripe.checkout import (
-    StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
-)
+try:
+    from emergentintegrations.payments.stripe.checkout import (
+        StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
+    )
+    _STRIPE_AVAILABLE = True
+except ImportError:
+    StripeCheckout = CheckoutSessionResponse = CheckoutStatusResponse = CheckoutSessionRequest = None
+    _STRIPE_AVAILABLE = False
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -300,6 +305,8 @@ async def create_course(course_data: CourseCreate):
 
 @api_router.post("/enrollments/checkout")
 async def create_checkout(request: Request, checkout_data: CheckoutRequest, user: dict = Depends(get_current_user)):
+    if not _STRIPE_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Stripe integration not available (emergentintegrations not installed)")
     # Get course details
     course = await db.courses.find_one({"id": checkout_data.course_id}, {"_id": 0})
     if not course:
@@ -369,6 +376,8 @@ async def create_checkout(request: Request, checkout_data: CheckoutRequest, user
 
 @api_router.get("/payments/status/{session_id}")
 async def get_payment_status(request: Request, session_id: str, user: dict = Depends(get_current_user)):
+    if not _STRIPE_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Stripe integration not available")
     # Get transaction
     transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
     if not transaction:
@@ -427,6 +436,8 @@ async def get_payment_status(request: Request, session_id: str, user: dict = Dep
 
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
+    if not _STRIPE_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Stripe integration not available")
     body = await request.body()
     signature = request.headers.get("Stripe-Signature", "")
     
