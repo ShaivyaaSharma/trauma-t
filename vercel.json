@@ -1,31 +1,6 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "name": "tti-app",
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/build"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
-    }
-  ],
-  "env": {
-    "REACT_APP_BACKEND_URL": "@backend_url"
-  },
-  "build": {
-    "env": {
-      "REACT_APP_BACKEND_URL": "@backend_url"
-    }
-  }
+  "buildCommand": "pip install -r requirements.txt && cd frontend && yarn install && yarn build",
+  "framework": null
 }

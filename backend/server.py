@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
@@ -1866,6 +1867,11 @@ app.add_middleware(
 
 # Include the router in the main app
 app.include_router(api_router)
+
+# Serve frontend static build (for Vercel full-stack: same deployment)
+_frontend_build = ROOT_DIR.parent / "frontend" / "build"
+if _frontend_build.exists():
+    app.mount("/", StaticFiles(directory=str(_frontend_build), html=True), name="frontend")
 
 # Configure logging
 logging.basicConfig(

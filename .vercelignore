@@ -1,7 +1,5 @@
 # Files and directories to ignore during Vercel deployment
-
-# Backend files (if deploying frontend only)
-backend/
+# Keep backend/ so api/index.py can import from backend.server
 
 # Python files
 *.pyc
