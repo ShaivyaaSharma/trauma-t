@@ -143,6 +143,11 @@ class Module(BaseModel):
     description: str
     learning_objectives: List[str] = []
     topics_covered: List[str] = []
+    concept_explanation: str = ""
+    instructor_script: str = ""
+    student_activities: List[str] = []
+    exercises: List[Dict] = []
+    expected_outcome: str = ""
     assessment: ModuleAssessment
     estimated_time: str = "3 hours"
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
