@@ -159,7 +159,7 @@ const LandingPage = () => {
                 </div>
                 
                 <Button 
-                  className="mt-8 w-full bg-sky hover:bg-sky/90 text-white font-dm-sans font-medium py-6 rounded-sm group-hover:translate-x-0 transition-all"
+                  className="mt-8 w-full bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white font-dm-sans font-medium py-6 rounded-lg group-hover:translate-x-0 transition-all shadow-md"
                   data-testid="explore-wellness-btn"
                 >
                   Explore Wellness Track
@@ -177,21 +177,26 @@ const LandingPage = () => {
               className="group"
             >
               <div 
-                className="bg-white rounded-lg border border-slate-200 p-8 md:p-10 shadow-card hover:shadow-card-hover transition-all duration-500 cursor-pointer h-full flex flex-col"
+                className="bg-white/80 backdrop-blur-sm rounded-xl border-2 border-blue-200 p-8 md:p-10 shadow-lg hover:shadow-xl hover:border-blue-400 transition-all duration-500 cursor-pointer h-full flex flex-col relative overflow-hidden"
                 onClick={() => navigate('/clinical')}
                 data-testid="clinical-track-card"
               >
-                <div className="mb-6">
-                  <span className="inline-block px-3 py-1 text-xs font-dm-sans font-semibold tracking-wider uppercase bg-navy-100 text-navy-700 rounded-full">
+                {/* Subtle pattern overlay */}
+                <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+                  <SoothingLines className="text-blue-500" />
+                </div>
+                
+                <div className="mb-6 relative z-10">
+                  <span className="inline-block px-3 py-1 text-xs font-dm-sans font-semibold tracking-wider uppercase bg-blue-100 text-blue-700 rounded-full">
                     Clinical Track
                   </span>
                 </div>
                 
-                <h2 className="text-3xl font-playfair font-semibold text-navy-900 mb-4">
+                <h2 className="text-3xl font-playfair font-semibold text-blue-900 mb-4 relative z-10">
                   ETT Clinical Model
                 </h2>
                 
-                <p className="text-navy-500 font-dm-sans mb-8 leading-relaxed">
+                <p className="text-blue-700 font-dm-sans mb-8 leading-relaxed relative z-10">
                   Advanced training for licensed mental health professionals
                 </p>
                 
