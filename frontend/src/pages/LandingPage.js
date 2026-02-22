@@ -66,23 +66,27 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="pt-32 pb-16 px-6 relative">
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-10 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-20"></div>
+        <div className="absolute bottom-10 left-10 w-96 h-96 bg-teal-100 rounded-full blur-3xl opacity-20"></div>
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-mindful-50 border border-mindful-200 mb-8">
-              <span className="w-2 h-2 bg-mindful-500 rounded-full animate-pulse"></span>
-              <span className="text-sm font-dm-sans text-sage-700">Programs Open - Applications Welcome</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 mb-8 shadow-sm">
+              <span className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span>
+              <span className="text-sm font-dm-sans text-blue-700">Programs Open - Applications Welcome</span>
             </div>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-playfair font-bold text-mindful-900 tracking-tight leading-tight mb-6">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-playfair font-bold text-blue-900 tracking-tight leading-tight mb-6">
               Choose Your Path
             </h1>
             
-            <p className="text-lg md:text-xl font-dm-sans text-sage-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl font-dm-sans text-teal-700 max-w-2xl mx-auto leading-relaxed">
               Transform lives through Emotional Transformation Therapy. Select your journey—Wellness for personal growth or Clinical for professional mastery.
             </p>
           </motion.div>
