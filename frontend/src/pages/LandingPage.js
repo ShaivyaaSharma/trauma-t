@@ -106,28 +106,33 @@ const LandingPage = () => {
               className="group"
             >
               <div 
-                className="bg-white rounded-lg border border-slate-200 p-8 md:p-10 shadow-card hover:shadow-card-hover transition-all duration-500 cursor-pointer h-full flex flex-col"
+                className="bg-white/80 backdrop-blur-sm rounded-xl border-2 border-blue-200 p-8 md:p-10 shadow-lg hover:shadow-xl hover:border-teal-300 transition-all duration-500 cursor-pointer h-full flex flex-col relative overflow-hidden"
                 onClick={() => navigate('/wellness')}
                 data-testid="wellness-track-card"
               >
-                <div className="mb-6">
-                  <span className="inline-block px-3 py-1 text-xs font-dm-sans font-semibold tracking-wider uppercase bg-sky/10 text-sky rounded-full">
+                {/* Subtle pattern overlay */}
+                <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+                  <SoothingLines className="text-teal-500" />
+                </div>
+                
+                <div className="mb-6 relative z-10">
+                  <span className="inline-block px-3 py-1 text-xs font-dm-sans font-semibold tracking-wider uppercase bg-teal-100 text-teal-700 rounded-full">
                     Wellness Track
                   </span>
                 </div>
                 
-                <h2 className="text-3xl font-playfair font-semibold text-navy-900 mb-4">
+                <h2 className="text-3xl font-playfair font-semibold text-blue-900 mb-4 relative z-10">
                   ETT Wellness Model
                 </h2>
                 
-                <p className="text-navy-500 font-dm-sans mb-8 leading-relaxed">
+                <p className="text-blue-700 font-dm-sans mb-8 leading-relaxed relative z-10">
                   Foundations of ETT for wellness professionals and personal seekers
                 </p>
                 
-                <div className="space-y-4 flex-grow">
+                <div className="space-y-4 flex-grow relative z-10">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                      <Leaf className="w-4 h-4 text-emerald-600" />
+                    <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                      <Leaf className="w-4 h-4 text-teal-600" />
                     </div>
                     <span className="text-navy-600 font-dm-sans text-sm leading-relaxed">
                       Level 1: Emotional regulation & stress reduction
