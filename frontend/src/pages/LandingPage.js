@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Leaf, Brain, Heart, Stethoscope, Award, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import SoothingLines from '@/components/SoothingLines';
 
 const LandingPage = () => {
   const { user } = useAuth();
