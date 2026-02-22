@@ -16,7 +16,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3" data-testid="logo-link">
-              <img src="/home-logo.svg" alt="TTI Logo" className="h-12 w-auto" />
+              <img src="/brain-logo.png" alt="TTI Brain Logo" className="h-14 w-14 object-contain" />
               <div>
                 <span className="font-playfair font-semibold text-mindful-800 text-lg tracking-tight">
                   Trauma Transformation Institute
