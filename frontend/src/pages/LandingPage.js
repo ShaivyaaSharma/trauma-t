@@ -200,37 +200,37 @@ const LandingPage = () => {
                   Advanced training for licensed mental health professionals
                 </p>
                 
-                <div className="space-y-4 flex-grow">
+                <div className="space-y-4 flex-grow relative z-10">
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <Stethoscope className="w-4 h-4 text-blue-600" />
                     </div>
-                    <span className="text-navy-600 font-dm-sans text-sm leading-relaxed">
+                    <span className="text-blue-700 font-dm-sans text-sm leading-relaxed">
                       Level 1-2: Core ETT techniques & attachment work
                     </span>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-4 h-4 text-rose-600" />
+                    <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-4 h-4 text-teal-600" />
                     </div>
-                    <span className="text-navy-600 font-dm-sans text-sm leading-relaxed">
+                    <span className="text-blue-700 font-dm-sans text-sm leading-relaxed">
                       Advanced: Somatic applications & spiritual integration
                     </span>
                   </div>
                   
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                      <Award className="w-4 h-4 text-teal-600" />
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <Award className="w-4 h-4 text-blue-600" />
                     </div>
-                    <span className="text-navy-600 font-dm-sans text-sm leading-relaxed">
+                    <span className="text-blue-700 font-dm-sans text-sm leading-relaxed">
                       Certification for clinical practice
                     </span>
                   </div>
                 </div>
                 
                 <Button 
-                  className="mt-8 w-full bg-navy-900 hover:bg-navy-800 text-white font-dm-sans font-medium py-6 rounded-sm group-hover:translate-x-0 transition-all"
+                  className="mt-8 w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-dm-sans font-medium py-6 rounded-lg group-hover:translate-x-0 transition-all shadow-md"
                   data-testid="explore-clinical-btn"
                 >
                   Explore Clinical Track
