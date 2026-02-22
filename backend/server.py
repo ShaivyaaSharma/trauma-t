@@ -983,78 +983,95 @@ async def seed_modules():
         {
             "week": 1,
             "module_number": 1,
-            "title": "Introduction to Emotional Transformation Therapy",
-            "description": "This module introduces the history, purpose, and theoretical basis of ETT. Students learn how ETT integrates psychotherapy with light and color modalities to rapidly transform emotional states.",
+            "title": "Understanding Trauma",
+            "description": "This module introduces trauma as a nervous system response. Students learn the three types of trauma and how the brain processes overwhelming experiences.",
             "learning_objectives": [
-                "Define Emotional Transformation Therapy (ETT) and its foundational principles",
-                "Summarize the historical development of ETT and its founding theorists",
-                "Describe how ETT combines cognitive-emotional theory with sensory stimulation",
-                "Differentiate ETT from other modalities (e.g., EMDR, cognitive-behavioral therapy)",
-                "Recognize the certification pathway and professional standards (ICF, NBCC, CEUs)"
+                "Define trauma as a nervous system response rather than just an event",
+                "Differentiate between acute, chronic, and complex trauma",
+                "Understand how the brain processes overwhelming experiences",
+                "Recognize how two people can experience the same event differently",
+                "Identify trauma responses in the body and mind"
             ],
             "topics_covered": [
-                "Origins and evolution of ETT; role of the ETT Institute",
-                "Core components: light/color devices, eye movement, attachment focus",
-                "Theoretical foundations: mind-body connection, introduction to attachment",
-                "Scope of ETT practice and prerequisites (licensed practitioner requirement)",
-                "Overview of training levels (ETT I–V) for context"
+                "Trauma definition: nervous system response vs. event",
+                "Acute trauma: single distressing events",
+                "Chronic trauma: repeated exposure to stress or abuse",
+                "Complex trauma: deep, layered trauma from early life",
+                "Brain's processing of overwhelming experiences"
             ],
+            "concept_explanation": "Trauma is not defined by the event itself, but by how the nervous system responds to the event. When an individual experiences something overwhelming, the brain may fail to process the experience properly, leading to stored emotional and physiological responses.\n\nThere are three primary types of trauma:\n• Acute Trauma: Resulting from a single distressing event (e.g., accident)\n• Chronic Trauma: Repeated exposure (e.g., ongoing stress or abuse)\n• Complex Trauma: Deep, layered trauma often from early life experiences",
+            "instructor_script": "Trauma is not what happens to you — it's what happens inside you as a result of what happened. Two people can go through the same event, and only one may develop trauma.",
+            "student_activities": [
+                "Reflect on a stressful experience (non-triggering)",
+                "Identify: What happened?",
+                "Identify: What did you feel in your body?",
+                "Identify: What thoughts came up?"
+            ],
+            "exercises": [
+                {
+                    "name": "Trauma Reflection Exercise",
+                    "type": "self-reflection",
+                    "instructions": "Think of a mildly stressful experience (not traumatic). Write down what happened, what you felt in your body, and what thoughts arose.",
+                    "duration": "10 minutes"
+                }
+            ],
+            "expected_outcome": "Students understand trauma as a nervous system response, not just an event.",
             "estimated_time": "3 hours",
             "quiz_questions": [
                 {
-                    "question": "What is the primary purpose of Emotional Transformation Therapy (ETT)?",
+                    "question": "What is the primary definition of trauma in this course?",
                     "options": [
-                        "To provide medication management for emotional disorders",
-                        "To rapidly transform emotional states through psychotherapy integrated with light and color modalities",
-                        "To replace traditional cognitive-behavioral therapy entirely",
-                        "To focus exclusively on physical rehabilitation"
+                        "The external event that happened",
+                        "How the nervous system responds to an overwhelming event",
+                        "Only physical injuries",
+                        "Something that happens to everyone the same way"
                     ],
                     "correct_answer": 1,
-                    "explanation": "ETT integrates psychotherapy with light and color modalities to rapidly transform emotional states, combining cognitive-emotional theory with sensory stimulation."
+                    "explanation": "Trauma is defined by how the nervous system responds, not by the event itself. This is why two people can experience the same event differently."
                 },
                 {
-                    "question": "Which of the following is NOT a core component of ETT?",
+                    "question": "Which type of trauma results from a single distressing event?",
                     "options": [
-                        "Light and color devices",
-                        "Eye movement techniques",
-                        "Attachment focus",
-                        "Pharmaceutical interventions"
+                        "Complex trauma",
+                        "Chronic trauma",
+                        "Acute trauma",
+                        "Developmental trauma"
                     ],
-                    "correct_answer": 3,
-                    "explanation": "ETT uses light/color devices, eye movement, and attachment focus. It does not involve pharmaceutical interventions."
+                    "correct_answer": 2,
+                    "explanation": "Acute trauma results from a single distressing event, such as an accident or natural disaster."
                 },
                 {
-                    "question": "What is a prerequisite for ETT practice?",
+                    "question": "Complex trauma is best described as:",
                     "options": [
-                        "Medical degree",
-                        "Licensed practitioner status in mental health",
-                        "Engineering background",
-                        "No prerequisites required"
-                    ],
-                    "correct_answer": 1,
-                    "explanation": "ETT requires practitioners to be licensed mental health professionals."
-                },
-                {
-                    "question": "How does ETT differ from EMDR?",
-                    "options": [
-                        "ETT uses only talk therapy",
-                        "ETT incorporates light and color stimulation in addition to eye movement",
-                        "EMDR is faster than ETT",
-                        "They are exactly the same"
+                        "A single severe event",
+                        "Deep, layered trauma often from early life experiences",
+                        "Only physical trauma",
+                        "Trauma that heals quickly"
                     ],
                     "correct_answer": 1,
-                    "explanation": "While both use eye movement, ETT additionally incorporates light and color modalities for emotional transformation."
+                    "explanation": "Complex trauma is deep and layered, often stemming from early life experiences and multiple traumatic events."
                 },
                 {
-                    "question": "Which professional standards recognize ETT certification?",
+                    "question": "Why can two people experience the same event and only one develop trauma?",
                     "options": [
-                        "Only local state boards",
-                        "ICF and NBCC continuing education standards",
-                        "No recognized standards",
-                        "Only medical boards"
+                        "One person is weaker than the other",
+                        "Trauma depends on the nervous system's response, not just the event",
+                        "One person imagined it",
+                        "It's completely random"
                     ],
                     "correct_answer": 1,
-                    "explanation": "ETT certification is designed to meet ICF (International Coach Federation) and NBCC (National Board for Certified Counselors) continuing education standards."
+                    "explanation": "Trauma is about how the nervous system processes and responds to the event, which varies between individuals based on many factors."
+                },
+                {
+                    "question": "Chronic trauma is characterized by:",
+                    "options": [
+                        "A single event",
+                        "Repeated exposure to stress or abuse",
+                        "Only childhood experiences",
+                        "Physical injuries only"
+                    ],
+                    "correct_answer": 1,
+                    "explanation": "Chronic trauma involves repeated exposure to stressful or traumatic situations over time."
                 }
             ]
         },
