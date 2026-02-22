@@ -289,26 +289,6 @@ const ModuleContentPage = () => {
               </Button>
             </div>
           </TabsContent>
-                      <span className="text-gray-700">{topic}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-            
-            <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Ready to Test Your Knowledge?
-              </h3>
-              <p className="text-gray-700 mb-4">
-                Once you've reviewed the content, take the assessment to demonstrate your understanding. 
-                You need to score at least {(module.assessment?.passing_score * 100)}% to pass and unlock the next module.
-              </p>
-              <Button onClick={() => setActiveTab('assessment')}>
-                Start Assessment
-              </Button>
-            </div>
-          </TabsContent>
           
           <TabsContent value="assessment" className="mt-6">
             <QuizComponent 
