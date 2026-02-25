@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, MapPin, Users, Check, CreditCard, ChevronDown, ChevronUp, BookOpen, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Check, CreditCard, ChevronDown, ChevronUp, BookOpen, Clock, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,16 +21,34 @@ const CourseDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
   const [expandedModules, setExpandedModules] = useState({});
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [courseRes, modulesRes] = await Promise.all([
+        const requests = [
           axios.get(`${API}/courses/${courseId}`),
-          axios.get(`${API}/courses/${courseId}/curriculum`)
-        ]);
+          axios.get(`${API}/courses/${courseId}/curriculum`),
+        ];
+        // Only fetch enrollments if the user is logged in
+        if (token) {
+          requests.push(
+            axios.get(`${API}/enrollments/my`, {
+              headers: { Authorization: `Bearer ${token}` }
+            })
+          );
+        }
+
+        const [courseRes, modulesRes, enrollmentsRes] = await Promise.all(requests);
         setCourse(courseRes.data);
         setModules(modulesRes.data.sort((a, b) => a.module_number - b.module_number));
+
+        if (enrollmentsRes) {
+          const enrolled = enrollmentsRes.data.some(
+            (e) => e.enrollment?.course_id === courseId || e.course_id === courseId
+          );
+          setIsEnrolled(enrolled);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error('Course not found');
@@ -40,7 +58,7 @@ const CourseDetailsPage = () => {
       }
     };
     fetchData();
-  }, [courseId, navigate]);
+  }, [courseId, navigate, token]);
 
   const toggleModule = (id) => {
     setExpandedModules(prev => ({
@@ -64,28 +82,24 @@ const CourseDetailsPage = () => {
       return;
     }
 
-    setEnrolling(true);
     try {
-      const response = await axios.post(
+      setEnrolling(true);
+      const origin = window.location.origin; // e.g. http://localhost:3000
+      const res = await axios.post(
         `${API}/enrollments/checkout`,
-        {
-          course_id: courseId,
-          origin_url: window.location.origin
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { course_id: courseId, origin_url: origin },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      // Redirect to Stripe checkout
-      window.location.href = response.data.checkout_url;
-    } catch (error) {
-      console.error('Enrollment error:', error);
-      const message = error.response?.data?.detail || 'Failed to start enrollment';
-      toast.error(message);
+      // Redirect to Stripe Checkout hosted page
+      window.location.href = res.data.checkout_url;
+    } catch (err) {
+      const msg = err.response?.data?.detail || 'Could not initiate checkout. Please try again.';
+      toast.error(msg);
       setEnrolling(false);
     }
   };
+
+
 
   if (loading) {
     return (
@@ -297,28 +311,56 @@ const CourseDetailsPage = () => {
                     </div>
                   </div>
 
-                  <Button
-                    className={`w-full py-7 font-dm-sans font-bold text-lg rounded-xl transition-all ${isWellness
-                      ? 'bg-teal-500 hover:bg-teal-600 hover:shadow-teal-100 shadow-lg'
-                      : 'bg-blue-600 hover:bg-blue-700 hover:shadow-blue-100 shadow-lg'
-                      } text-white`}
-                    onClick={handleEnroll}
-                    disabled={enrolling || course.is_coming_soon}
-                  >
-                    {enrolling ? (
-                      <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        Initializing Secure Checkout...
+                  {isEnrolled ? (
+                    <div className="space-y-3">
+                      {/* Already enrolled banner */}
+                      <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-4">
+                        <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+                        <div>
+                          <p className="font-dm-sans font-bold text-emerald-800 text-sm">Already Enrolled</p>
+                          <p className="text-xs text-emerald-600 font-dm-sans">You have access to this course</p>
+                        </div>
                       </div>
-                    ) : course.is_coming_soon ? (
-                      'Registration Closed'
-                    ) : (
-                      <>
-                        <CreditCard className="w-5 h-5 mr-3" />
-                        Enroll Securely Now
-                      </>
-                    )}
-                  </Button>
+                      {/* Go to learning */}
+                      <Button
+                        className="w-full py-7 font-dm-sans font-bold text-lg rounded-xl bg-navy-900 hover:bg-navy-800 text-white shadow-lg"
+                        onClick={() => navigate(`/courses/${courseId}/learn`)}
+                      >
+                        <BookOpen className="w-5 h-5 mr-3" />
+                        Continue Learning
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full font-dm-sans"
+                        onClick={() => navigate('/dashboard')}
+                      >
+                        Go to Dashboard
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      className={`w-full py-7 font-dm-sans font-bold text-lg rounded-xl transition-all ${isWellness
+                        ? 'bg-teal-500 hover:bg-teal-600 hover:shadow-teal-100 shadow-lg'
+                        : 'bg-blue-600 hover:bg-blue-700 hover:shadow-blue-100 shadow-lg'
+                        } text-white`}
+                      onClick={handleEnroll}
+                      disabled={enrolling || course.is_coming_soon}
+                    >
+                      {enrolling ? (
+                        <div className="flex items-center gap-2">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          Initializing...
+                        </div>
+                      ) : course.is_coming_soon ? (
+                        'Registration Closed'
+                      ) : (
+                        <>
+                          <CreditCard className="w-5 h-5 mr-3" />
+                          Enroll Now
+                        </>
+                      )}
+                    </Button>
+                  )}
 
                   <p className="text-center text-[10px] text-navy-400 uppercase tracking-widest mt-6">
                     Secure Enrollment via Stripe Terminal

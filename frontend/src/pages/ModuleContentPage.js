@@ -28,17 +28,14 @@ const ModuleContentPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('content');
 
-  useEffect(() => {
-    if (token && courseId && moduleId) {
-      fetchModule();
-    }
-  }, [token, courseId, moduleId, fetchModule]);
-
   const fetchModule = useCallback(async () => {
     try {
       setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
-      const res = await axios.get(`${API_URL}/api/courses/${courseId}/modules/${moduleId}`, { headers });
+      const res = await axios.get(
+        `${API_URL}/api/courses/${courseId}/modules/${moduleId}`,
+        { headers }
+      );
       setModule(res.data);
     } catch (error) {
       console.error('Error fetching module:', error);
@@ -53,10 +50,17 @@ const ModuleContentPage = () => {
     }
   }, [courseId, moduleId, token, navigate]);
 
+  useEffect(() => {
+    if (token && courseId && moduleId) {
+      fetchModule();
+    }
+  }, [token, courseId, moduleId, fetchModule]);
+
   const handleQuizComplete = () => {
     fetchModule();
     setActiveTab('content');
   };
+
 
   if (loading) {
     return (
@@ -89,7 +93,7 @@ const ModuleContentPage = () => {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center space-x-2 mb-2">
-                <Badge variant="outline">Week {module.week}</Badge>
+                {module.week && <Badge variant="outline">Week {module.week}</Badge>}
                 <Badge variant="outline">Module {module.module_number}</Badge>
                 {module.progress?.is_completed && (
                   <Badge className="bg-green-600">
@@ -274,7 +278,7 @@ const ModuleContentPage = () => {
               </h3>
               <p className="text-gray-700 mb-4">
                 Once you've reviewed the content, take the assessment to demonstrate your understanding.
-                You need to score at least {(module.assessment?.passing_score * 100)}% to pass and unlock the next module.
+                You need to score at least 80% to pass and unlock the next module.
               </p>
               <Button onClick={() => setActiveTab('assessment')}>
                 Start Assessment

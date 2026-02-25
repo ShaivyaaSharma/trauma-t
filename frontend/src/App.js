@@ -16,6 +16,7 @@ import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
 import CourseLearningPage from "@/pages/CourseLearningPage";
 import ModuleContentPage from "@/pages/ModuleContentPage";
 import MockCheckoutPage from "@/pages/MockCheckoutPage";
+import DemoPaymentPage from "@/pages/DemoPaymentPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -70,6 +71,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MockCheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute>
+                  <DemoPaymentPage />
                 </ProtectedRoute>
               }
             />

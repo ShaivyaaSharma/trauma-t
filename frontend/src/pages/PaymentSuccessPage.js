@@ -17,6 +17,8 @@ const PaymentSuccessPage = () => {
   const [attempts, setAttempts] = useState(0);
 
   const sessionId = searchParams.get('session_id');
+  // mock=1 means backend will auto-confirm on first poll (no real Stripe key needed)
+  const isMock = searchParams.get('mock') === '1';
 
   useEffect(() => {
     if (!sessionId) {
@@ -25,8 +27,9 @@ const PaymentSuccessPage = () => {
     }
 
     const pollPaymentStatus = async () => {
-      const maxAttempts = 10;
-      const pollInterval = 2000;
+      // Give up after 15 attempts (~30 s) for real Stripe; mock resolves on attempt 0
+      const maxAttempts = isMock ? 3 : 15;
+      const pollInterval = isMock ? 500 : 2000;
 
       if (attempts >= maxAttempts) {
         setStatus('error');
@@ -59,7 +62,7 @@ const PaymentSuccessPage = () => {
     };
 
     pollPaymentStatus();
-  }, [sessionId, token, attempts]);
+  }, [sessionId, token, attempts, isMock]);
 
   return (
     <div className="min-h-screen bg-navy-50/30 flex items-center justify-center px-6 py-12">

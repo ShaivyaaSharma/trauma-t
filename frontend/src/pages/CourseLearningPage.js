@@ -29,12 +29,6 @@ const CourseLearningPage = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (token && courseId) {
-      fetchData();
-    }
-  }, [token, courseId, fetchData]);
-
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -44,13 +38,23 @@ const CourseLearningPage = () => {
       const courseRes = await axios.get(`${API_URL}/api/courses/${courseId}`, { headers });
       setCourse(courseRes.data);
 
-      // Fetch modules with progress
+      // Fetch modules with progress (our backend returns {course_id, modules, completed_modules, current_module, overall_progress})
       const modulesRes = await axios.get(`${API_URL}/api/courses/${courseId}/modules`, { headers });
-      setModules(modulesRes.data);
+      const data = modulesRes.data;
 
-      // Fetch overall progress
-      const progressRes = await axios.get(`${API_URL}/api/courses/${courseId}/progress`, { headers });
-      setProgress(progressRes.data);
+      // Backend returns {modules: [...], overall_progress, completed_modules, current_module}
+      if (data.modules) {
+        setModules(data.modules);
+        setProgress({
+          overall_progress: data.overall_progress,
+          completed_modules: data.completed_modules?.length ?? 0,
+          total_modules: data.modules.length,
+          current_module: data.current_module,
+        });
+      } else {
+        // Fallback: data is an array directly
+        setModules(Array.isArray(data) ? data : []);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       if (error.response?.status === 403) {
@@ -64,10 +68,15 @@ const CourseLearningPage = () => {
     }
   }, [courseId, token, navigate]);
 
+  useEffect(() => {
+    if (token && courseId) {
+      fetchData();
+    }
+  }, [token, courseId, fetchData]);
+
   const getModuleStatus = (module) => {
-    const prog = module.progress || {};
-    if (prog.is_completed) return 'completed';
-    if (prog.is_unlocked) return 'unlocked';
+    if (module.is_completed) return 'completed';
+    if (module.is_unlocked) return 'unlocked';
     return 'locked';
   };
 
@@ -86,24 +95,20 @@ const CourseLearningPage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-50 border-green-200';
-      case 'unlocked':
-        return 'bg-blue-50 border-blue-200';
-      case 'locked':
-        return 'bg-gray-50 border-gray-200';
-      default:
-        return 'bg-white';
+      case 'completed': return 'bg-green-50 border-green-200';
+      case 'unlocked': return 'bg-blue-50 border-blue-200';
+      case 'locked': return 'bg-gray-50 border-gray-200';
+      default: return 'bg-white';
     }
   };
 
-  const groupModulesByWeek = (modules) => {
+  // Group modules by week (use module_number bucketed every 2, or just show as Week 1)
+  const groupModulesByWeek = (mods) => {
     const grouped = {};
-    modules.forEach(module => {
-      if (!grouped[module.week]) {
-        grouped[module.week] = [];
-      }
-      grouped[module.week].push(module);
+    mods.forEach(mod => {
+      const week = mod.week ?? Math.ceil(mod.module_number / 2);
+      if (!grouped[week]) grouped[week] = [];
+      grouped[week].push(mod);
     });
     return grouped;
   };
@@ -194,22 +199,22 @@ const CourseLearningPage = () => {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {weekGroups[week].map(module => {
-                const status = getModuleStatus(module);
+              {weekGroups[week].map(mod => {
+                const status = getModuleStatus(mod);
                 const isClickable = status !== 'locked';
 
                 return (
                   <Card
-                    key={module.id}
+                    key={mod.module_number}
                     className={`transition-all duration-200 ${getStatusColor(status)} ${isClickable ? 'hover:shadow-lg cursor-pointer' : 'cursor-not-allowed opacity-75'
                       }`}
-                    onClick={() => isClickable && navigate(`/courses/${courseId}/modules/${module.id}`)}
+                    onClick={() => isClickable && navigate(`/courses/${courseId}/modules/${mod.module_number}`)}
                   >
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
-                            <Badge variant="outline">Module {module.module_number}</Badge>
+                            <Badge variant="outline">Module {mod.module_number}</Badge>
                             {status === 'completed' && (
                               <Badge className="bg-green-600">Completed</Badge>
                             )}
@@ -217,12 +222,12 @@ const CourseLearningPage = () => {
                               <Badge className="bg-blue-600">In Progress</Badge>
                             )}
                           </div>
-                          <CardTitle className="text-xl">{module.title}</CardTitle>
+                          <CardTitle className="text-xl">{mod.title}</CardTitle>
                         </div>
                         {getStatusIcon(status)}
                       </div>
                       <CardDescription className="mt-2">
-                        {module.description}
+                        {mod.description}
                       </CardDescription>
                     </CardHeader>
 
@@ -230,23 +235,25 @@ const CourseLearningPage = () => {
                       <div className="space-y-3">
                         <div className="flex items-center text-sm text-gray-600">
                           <Clock className="h-4 w-4 mr-2" />
-                          {module.estimated_time}
+                          {mod.estimated_time}
                         </div>
 
-                        {module.progress?.quiz_attempts > 0 && (
+
+                        {mod.progress?.quiz_attempts > 0 && (
                           <div className="pt-3 border-t">
                             <div className="flex justify-between text-sm mb-1">
                               <span className="text-gray-600">Best Score</span>
                               <span className="font-semibold">
-                                {(module.progress.best_score * 100).toFixed(0)}%
+                                {(mod.progress.best_score * 100).toFixed(0)}%
                               </span>
                             </div>
-                            <Progress value={module.progress.best_score * 100} className="h-2" />
+                            <Progress value={mod.progress.best_score * 100} className="h-2" />
                             <div className="text-xs text-gray-500 mt-1">
-                              {module.progress.quiz_attempts} attempt{module.progress.quiz_attempts !== 1 ? 's' : ''}
+                              {mod.progress.quiz_attempts} attempt{mod.progress.quiz_attempts !== 1 ? 's' : ''}
                             </div>
                           </div>
                         )}
+
 
                         {status === 'locked' && (
                           <div className="pt-3 border-t">
