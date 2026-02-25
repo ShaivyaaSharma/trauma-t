@@ -10,10 +10,10 @@
         "frontend:build": "cd frontend && npm run build",
         "backend:start": "cd backend && uvicorn server:app --reload",
         "deploy": "vercel --prod",
-        "build": "npm install --legacy-peer-deps && craco build",
-        "start": "craco start"
+        "build": "cd frontend && npm install --legacy-peer-deps && npm run build",
+        "start": "cd frontend && npm start"
     },
     "engines": {
-        "node": "24.x"
+        "node": "20.x"
     }
 }
