@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -42,6 +43,24 @@ app = FastAPI(title="Trauma Transformation Institute API")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
+
+@api_router.get("/health")
+async def health_check():
+    """Check if the API and database are up"""
+    try:
+        # Ping database
+        await client.admin.command('ping')
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "environment": os.environ.get('VERCEL_ENV', 'development')
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+                "database": "disconnected",
+            "error": str(e)
+        }
 
 # Security
 security = HTTPBearer()
@@ -1890,6 +1909,15 @@ app.add_middleware(
 
 # Include the router in the main app
 app.include_router(api_router)
+
+# Global exception handler for better debugging
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Global error: {str(exc)}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error", "error": str(exc), "path": request.url.path},
+    )
 
 # Configure logging
 logging.basicConfig(
