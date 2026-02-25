@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = `${process.env.REACT_APP_BACKEND_URL || ''}/api`;
 
 const PaymentSuccessPage = () => {
   const [searchParams] = useSearchParams();
@@ -106,7 +106,7 @@ const PaymentSuccessPage = () => {
                   Thank you for enrolling. You will receive a confirmation email with course details shortly.
                 </p>
                 <div className="space-y-3">
-                  <Button 
+                  <Button
                     className="w-full bg-navy-900 hover:bg-navy-800 font-dm-sans"
                     onClick={() => navigate('/dashboard')}
                     data-testid="go-dashboard-btn"
