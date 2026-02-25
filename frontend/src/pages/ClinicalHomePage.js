@@ -20,7 +20,11 @@ const ClinicalHomePage = () => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(`${API}/courses?track=clinical`);
-        setCourses(response.data);
+        const sortedCourses = response.data.sort((a, b) => {
+          if (a.is_coming_soon === b.is_coming_soon) return 0;
+          return a.is_coming_soon ? 1 : -1;
+        });
+        setCourses(sortedCourses);
       } catch (error) {
         console.error('Error fetching courses:', error);
       } finally {
@@ -40,54 +44,6 @@ const ClinicalHomePage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <Link 
-                to="/" 
-                className="flex items-center gap-2 text-navy-500 hover:text-navy-900 transition-colors"
-                data-testid="back-home-link"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="font-dm-sans text-sm">Back</span>
-              </Link>
-              <div className="h-6 w-px bg-slate-200"></div>
-              <Link to="/" className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-navy-900 rounded-sm flex items-center justify-center">
-                  <span className="text-white font-playfair font-bold text-sm">T</span>
-                </div>
-                <span className="font-playfair font-semibold text-navy-900">TTI</span>
-              </Link>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              {user ? (
-                <Link to="/dashboard">
-                  <Button 
-                    variant="outline" 
-                    className="font-dm-sans border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white"
-                    data-testid="dashboard-btn"
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
-              ) : (
-                <Link to="/login">
-                  <Button 
-                    variant="outline" 
-                    className="font-dm-sans border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white"
-                    data-testid="login-btn"
-                  >
-                    Sign In
-                  </Button>
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero */}
       <section className="pt-28 pb-12 px-6 bg-gradient-to-b from-navy-50 to-white">
@@ -126,15 +82,15 @@ const ClinicalHomePage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
-                  <Card 
+                  <Card
                     className={`h-full border-slate-200 shadow-card hover:shadow-card-hover transition-all duration-500 cursor-pointer group ${course.is_coming_soon ? 'opacity-75' : ''}`}
                     onClick={() => !course.is_coming_soon && navigate(`/courses/${course.id}`)}
                     data-testid={`course-card-${course.id}`}
                   >
                     <CardContent className="p-6 flex flex-col h-full">
                       <div className="flex items-start justify-between mb-4">
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className="font-dm-sans text-xs capitalize border-navy-300 text-navy-600"
                         >
                           {course.level}
@@ -146,15 +102,15 @@ const ClinicalHomePage = () => {
                           </Badge>
                         )}
                       </div>
-                      
+
                       <h3 className="text-xl font-playfair font-semibold text-navy-900 mb-2 group-hover:text-navy-700 transition-colors">
                         {course.title}
                       </h3>
-                      
+
                       <p className="text-sm font-dm-sans text-navy-500 mb-4 flex-grow">
                         {course.description}
                       </p>
-                      
+
                       <div className="space-y-2 text-sm font-dm-sans text-navy-400 mb-4">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
@@ -164,12 +120,8 @@ const ClinicalHomePage = () => {
                           <MapPin className="w-4 h-4" />
                           <span>{course.location}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          <span>{course.duration}</span>
-                        </div>
                       </div>
-                      
+
                       <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                         <div>
                           <span className="text-2xl font-playfair font-bold text-navy-900">
@@ -182,8 +134,8 @@ const ClinicalHomePage = () => {
                           )}
                         </div>
                         {!course.is_coming_soon && (
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             className="bg-navy-900 hover:bg-navy-800 font-dm-sans"
                             data-testid={`view-course-${course.id}`}
                           >
@@ -201,14 +153,7 @@ const ClinicalHomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-100 py-8 px-6 bg-navy-50/50">
-        <div className="max-w-6xl mx-auto text-center">
-          <span className="font-dm-sans text-sm text-navy-500">
-            © 2025 Trauma Transformation Institute - ETT India
-          </span>
-        </div>
-      </footer>
+
     </div>
   );
 };

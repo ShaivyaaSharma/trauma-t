@@ -1,0 +1,94 @@
+{
+    "courses": [
+        {
+            "title": "ETT Wellness Level 2",
+            "track": "Wellness",
+            "duration_weeks": 6,
+            "certification_level": "Intermediate",
+            "licensing_required": false,
+            "target_audience": "Coaches, Wellness Practitioners",
+            "focus": "Advanced nervous system regulation and brainwave entrainment"
+        },
+        {
+            "title": "ETT Clinical Level 1",
+            "track": "Clinical",
+            "duration_weeks": 6,
+            "certification_level": "Beginner",
+            "licensing_required": true,
+            "target_audience": "Licensed Psychologists, Therapists",
+            "focus": "Foundational ETT, attachment theory, and therapeutic interventions"
+        },
+        {
+            "title": "ETT Clinical Level 2",
+            "track": "Clinical",
+            "duration_weeks": 8,
+            "certification_level": "Intermediate",
+            "licensing_required": true,
+            "target_audience": "Licensed mental health professionals",
+            "focus": "Trauma, addiction, DSM-5 integration, and supervised practice"
+        },
+        {
+            "title": "CCTSI (Certified Clinical Trauma Specialist - Individual)",
+            "track": "Clinical",
+            "duration_weeks": 8,
+            "certification_level": "Intermediate",
+            "licensing_required": true,
+            "target_audience": "Licensed Therapists",
+            "focus": "Clinical trauma treatment for individual adults"
+        },
+        {
+            "title": "CCTSF (Certified Clinical Trauma Specialist - Family)",
+            "track": "Clinical",
+            "duration_weeks": 8,
+            "certification_level": "Intermediate",
+            "licensing_required": true,
+            "target_audience": "Licensed Family Therapists",
+            "focus": "Family systems and intergenerational trauma diagnosis"
+        },
+        {
+            "title": "CCTSA (Certified Clinical Trauma Specialist - Addiction)",
+            "track": "Clinical",
+            "duration_weeks": 10,
+            "certification_level": "Advanced",
+            "licensing_required": true,
+            "target_audience": "Addiction Counselors, Psychiatrists",
+            "focus": "Neurobiology of addiction and complex trauma treatment"
+        },
+        {
+            "title": "CTSS (Certified Trauma Support Specialist)",
+            "track": "Support",
+            "duration_weeks": 4,
+            "certification_level": "Beginner",
+            "licensing_required": false,
+            "target_audience": "Teachers, Caregivers, First Responders",
+            "focus": "Trauma awareness and psychological first aid"
+        },
+        {
+            "title": "CRP (Community Resilience Practitioner)",
+            "track": "Support",
+            "duration_weeks": 6,
+            "certification_level": "Intermediate",
+            "licensing_required": false,
+            "target_audience": "NGO Workers, Community Leaders",
+            "focus": "Community healing and referral systems"
+        },
+        {
+            "title": "ACCTS (Advanced Certified Clinical Trauma Specialist)",
+            "track": "Clinical",
+            "duration_weeks": 12,
+            "certification_level": "Advanced",
+            "licensing_required": true,
+            "target_audience": "Senior Clinical Practitioners",
+            "focus": "Complexity, supervision, and advanced diagnostic frameworks"
+        },
+        {
+            "title": "CCTS-P (Certified Clinical Trauma Specialist - Prenatal/Pediatric)",
+            "track": "Clinical",
+            "duration_weeks": 8,
+            "certification_level": "Intermediate",
+            "licensing_required": true,
+            "target_audience": "Pediatric Psychologists",
+            "focus": "Early developmental trauma and pediatric mental health"
+        }
+    ]
+}

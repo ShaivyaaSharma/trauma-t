@@ -21,7 +21,7 @@ const SignupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!name || !email || !password || !confirmPassword) {
       toast.error('Please fill in all fields');
       return;
@@ -59,29 +59,19 @@ const SignupPage = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* Back Link */}
-        <Link 
-          to="/" 
-          className="inline-flex items-center gap-2 text-navy-500 hover:text-navy-900 transition-colors mb-8"
-          data-testid="back-home-link"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="font-dm-sans text-sm">Back to Home</span>
-        </Link>
+
 
         <Card className="border-slate-200 shadow-card">
           <CardHeader className="text-center pb-2">
-            <div className="w-12 h-12 bg-navy-900 rounded-sm flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-playfair font-bold text-xl">T</span>
-            </div>
+            <img src="/brain-logo.png" alt="Logo" className="w-16 h-16 object-contain mx-auto mb-4" />
             <CardTitle className="text-2xl font-playfair text-navy-900">
               Create Account
             </CardTitle>
             <CardDescription className="font-dm-sans">
-              Join TTI to start your transformation journey
+              Join TraumaTransformationInstitute to start your journey
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -153,8 +143,8 @@ const SignupPage = () => {
                 />
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full h-12 bg-navy-900 hover:bg-navy-800 font-dm-sans font-medium mt-6"
                 disabled={loading}
                 data-testid="signup-submit-btn"
@@ -173,8 +163,8 @@ const SignupPage = () => {
             <div className="mt-6 text-center">
               <p className="font-dm-sans text-sm text-navy-500">
                 Already have an account?{' '}
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="text-sky hover:text-sky/80 font-medium"
                   data-testid="login-link"
                 >

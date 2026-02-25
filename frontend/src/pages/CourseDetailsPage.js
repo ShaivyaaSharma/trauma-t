@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, MapPin, Clock, Users, Check, CreditCard } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Check, CreditCard, ChevronDown, ChevronUp, BookOpen, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,24 +17,37 @@ const CourseDetailsPage = () => {
   const { user, token } = useAuth();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
+  const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
+  const [expandedModules, setExpandedModules] = useState({});
 
   useEffect(() => {
-    const fetchCourse = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${API}/courses/${courseId}`);
-        setCourse(response.data);
+        const [courseRes, modulesRes] = await Promise.all([
+          axios.get(`${API}/courses/${courseId}`),
+          axios.get(`${API}/courses/${courseId}/curriculum`)
+        ]);
+        setCourse(courseRes.data);
+        setModules(modulesRes.data.sort((a, b) => a.module_number - b.module_number));
       } catch (error) {
-        console.error('Error fetching course:', error);
+        console.error('Error fetching data:', error);
         toast.error('Course not found');
         navigate('/');
       } finally {
         setLoading(false);
       }
     };
-    fetchCourse();
+    fetchData();
   }, [courseId, navigate]);
+
+  const toggleModule = (id) => {
+    setExpandedModules(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-IN', {
@@ -63,7 +76,7 @@ const CourseDetailsPage = () => {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      
+
       // Redirect to Stripe checkout
       window.location.href = response.data.checkout_url;
     } catch (error) {
@@ -87,118 +100,163 @@ const CourseDetailsPage = () => {
   }
 
   const totalPrice = course.price + (course.equipment_fee || 0);
-  const isWellness = course.track === 'wellness';
+  const isWellness = course.track === 'wellness' || course.track === 'both';
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <Link 
-                to={isWellness ? '/wellness' : '/clinical'} 
-                className="flex items-center gap-2 text-navy-500 hover:text-navy-900 transition-colors"
-                data-testid="back-link"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="font-dm-sans text-sm">Back to Courses</span>
-              </Link>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              {user ? (
-                <Link to="/dashboard">
-                  <Button variant="outline" className="font-dm-sans" data-testid="dashboard-btn">
-                    Dashboard
-                  </Button>
-                </Link>
-              ) : (
-                <Link to="/login">
-                  <Button variant="outline" className="font-dm-sans" data-testid="login-btn">
-                    Sign In
-                  </Button>
-                </Link>
-              )}
-            </div>
+      {/* Back Header */}
+      <div className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Button variant="ghost" className="gap-2" onClick={() => navigate(-1)}>
+            <ArrowLeft className="w-4 h-4" />
+            Back to Programs
+          </Button>
+          <div className="hidden md:flex items-center gap-4">
+            <span className="text-sm font-dm-sans text-navy-500">{course.title}</span>
+            <Separator orientation="vertical" className="h-4" />
+            <span className="text-sm font-dm-sans font-bold text-navy-900">{formatPrice(course.price)}</span>
           </div>
         </div>
-      </nav>
+      </div>
 
-      {/* Content */}
-      <div className="pt-24 pb-24 px-6">
+      {/* Hero Content */}
+      <div className="pt-28 pb-20 px-6 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Main Content */}
-            <motion.div 
-              className="lg:col-span-2"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge 
-                className={`mb-4 font-dm-sans ${isWellness ? 'bg-sky/10 text-sky' : 'bg-navy-100 text-navy-700'}`}
+            <div className="lg:col-span-2">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
               >
-                {course.track.charAt(0).toUpperCase() + course.track.slice(1)} Track - {course.level}
-              </Badge>
-              
-              <h1 className="text-4xl md:text-5xl font-playfair font-bold text-navy-900 mb-6" data-testid="course-title">
-                {course.title}
-              </h1>
-              
-              <p className="text-lg font-dm-sans text-navy-500 mb-8 leading-relaxed">
-                {course.detailed_description || course.description}
-              </p>
+                <Badge className={`mb-4 ${isWellness ? 'bg-teal-100 text-teal-700' : 'bg-blue-100 text-blue-700'} border-none uppercase tracking-wider text-[10px]`}>
+                  {course.track} Path - {course.level}
+                </Badge>
 
-              {/* Course Info */}
-              <div className="grid sm:grid-cols-2 gap-4 mb-10">
-                <div className="flex items-center gap-3 p-4 bg-navy-50 rounded-lg">
-                  <Calendar className="w-5 h-5 text-navy-400" />
-                  <div>
-                    <p className="text-xs font-dm-sans text-navy-400 uppercase tracking-wide">Schedule</p>
-                    <p className="font-dm-sans text-navy-900">{course.schedule}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-navy-50 rounded-lg">
-                  <MapPin className="w-5 h-5 text-navy-400" />
-                  <div>
-                    <p className="text-xs font-dm-sans text-navy-400 uppercase tracking-wide">Location</p>
-                    <p className="font-dm-sans text-navy-900">{course.location}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-navy-50 rounded-lg">
-                  <Clock className="w-5 h-5 text-navy-400" />
-                  <div>
-                    <p className="text-xs font-dm-sans text-navy-400 uppercase tracking-wide">Duration</p>
-                    <p className="font-dm-sans text-navy-900">{course.duration}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-navy-50 rounded-lg">
-                  <Users className="w-5 h-5 text-navy-400" />
-                  <div>
-                    <p className="text-xs font-dm-sans text-navy-400 uppercase tracking-wide">Instructor</p>
-                    <p className="font-dm-sans text-navy-900">{course.instructor}</p>
-                  </div>
-                </div>
-              </div>
+                <h1 className="text-4xl md:text-5xl font-playfair font-bold text-navy-900 mb-6">
+                  {course.title}
+                </h1>
 
-              {/* Features */}
-              <div>
-                <h2 className="text-2xl font-playfair font-semibold text-navy-900 mb-6">
-                  What You'll Learn
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {course.features?.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${isWellness ? 'bg-sky/10' : 'bg-navy-100'}`}>
-                        <Check className={`w-3 h-3 ${isWellness ? 'text-sky' : 'text-navy-600'}`} />
-                      </div>
-                      <span className="font-dm-sans text-navy-600">{feature}</span>
+                <p className="text-lg font-dm-sans text-navy-600 mb-10 leading-relaxed">
+                  {course.detailed_description || course.description}
+                </p>
+
+                <div className="grid sm:grid-cols-3 gap-6 mb-12">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-dm-sans text-navy-400 uppercase tracking-widest">Schedule</span>
+                    <div className="flex items-center gap-2 text-navy-900 font-medium font-dm-sans">
+                      <Calendar className="w-4 h-4 text-navy-400" />
+                      {course.schedule}
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-dm-sans text-navy-400 uppercase tracking-widest">Location</span>
+                    <div className="flex items-center gap-2 text-navy-900 font-medium font-dm-sans">
+                      <MapPin className="w-4 h-4 text-navy-400" />
+                      {course.location}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-dm-sans text-navy-400 uppercase tracking-widest">Instructor</span>
+                    <div className="flex items-center gap-2 text-navy-900 font-medium font-dm-sans">
+                      <Users className="w-4 h-4 text-navy-400" />
+                      {course.instructor}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+
+                <div className="space-y-12">
+                  {/* Features / Objectives */}
+                  <section>
+                    <h2 className="text-2xl font-playfair font-bold text-navy-900 mb-6 underline decoration-teal-200 underline-offset-8">
+                      Program Curriculum Overview
+                    </h2>
+                    <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
+                      {course.features?.map((feature, idx) => (
+                        <div key={idx} className="flex items-start gap-4">
+                          <Check className="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-navy-700 font-dm-sans">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Modules Accordion */}
+                  <section>
+                    <h2 className="text-2xl font-playfair font-bold text-navy-900 mb-6 underline decoration-blue-200 underline-offset-8">
+                      Module Breakdown
+                    </h2>
+                    <div className="space-y-4">
+                      {modules.map((mod) => (
+                        <Card key={mod.id} className="border-slate-100 overflow-hidden shadow-sm">
+                          <button
+                            onClick={() => toggleModule(mod.id)}
+                            className="w-full text-left p-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                          >
+                            <div className="flex items-center gap-4">
+                              <span className="w-8 h-8 rounded-full bg-navy-900 text-white flex items-center justify-center text-xs font-bold">
+                                {mod.module_number}
+                              </span>
+                              <div>
+                                <h3 className="font-playfair font-bold text-navy-900">{mod.title}</h3>
+                                <div className="flex items-center gap-3 text-xs text-navy-400 mt-1 font-dm-sans">
+                                  <span className="flex items-center gap-1">
+                                    <Clock className="w-3 h-3" /> {mod.estimated_time || '4 hours'}
+                                  </span>
+                                  <span>•</span>
+                                  <span>{mod.topics_covered?.length || 0} topics included</span>
+                                </div>
+                              </div>
+                            </div>
+                            {expandedModules[mod.id] ? <ChevronUp className="w-5 h-5 text-navy-400" /> : <ChevronDown className="w-5 h-5 text-navy-400" />}
+                          </button>
+
+                          {expandedModules[mod.id] && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              className="p-5 pt-0 border-t border-slate-50"
+                            >
+                              <div className="pt-4 space-y-4">
+                                <p className="text-sm text-navy-600 font-dm-sans leading-relaxed italic">
+                                  {mod.description}
+                                </p>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                  <div>
+                                    <h4 className="text-xs font-bold uppercase tracking-widest text-navy-400 mb-3">Key Topics</h4>
+                                    <ul className="space-y-2">
+                                      {mod.topics_covered?.map((topic, i) => (
+                                        <li key={i} className="text-sm text-navy-700 flex items-center gap-2">
+                                          <div className="w-1.5 h-1.5 rounded-full bg-blue-300" />
+                                          {topic}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                  <div>
+                                    <h4 className="text-xs font-bold uppercase tracking-widest text-navy-400 mb-3">Activities</h4>
+                                    <ul className="space-y-2">
+                                      {mod.student_activities?.map((activity, i) => (
+                                        <li key={i} className="text-sm text-navy-700 flex items-center gap-2">
+                                          <BookOpen className="w-3.5 h-3.5 text-teal-500" />
+                                          {activity}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </Card>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </motion.div>
+            </div>
 
             {/* Sidebar - Enrollment Card */}
             <motion.div
@@ -206,69 +264,65 @@ const CourseDetailsPage = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Card className="sticky top-28 border-slate-200 shadow-card-hover">
-                <CardContent className="p-6">
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2 mb-2">
-                      <span className="text-4xl font-playfair font-bold text-navy-900">
-                        {formatPrice(course.price)}
-                      </span>
+              <Card className="sticky top-28 border-slate-200 shadow-xl overflow-hidden group">
+                <div className={`h-2 ${isWellness ? 'bg-teal-500' : 'bg-blue-600'}`} />
+                <CardContent className="p-8">
+                  <div className="mb-8">
+                    <p className="text-xs font-bold uppercase tracking-widest text-navy-400 mb-2">Program Investment</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-playfair font-bold text-navy-900">{formatPrice(course.price)}</span>
+                      {course.equipment_fee > 0 && <span className="text-xs text-navy-400 font-dm-sans">+ fees</span>}
                     </div>
-                    {course.equipment_fee > 0 && (
-                      <p className="text-sm font-dm-sans text-navy-400">
-                        + {formatPrice(course.equipment_fee)} equipment fee
-                      </p>
-                    )}
                   </div>
 
-                  <Separator className="my-6" />
-
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-sm font-dm-sans">
-                      <span className="text-navy-500">Course Fee</span>
-                      <span className="text-navy-900">{formatPrice(course.price)}</span>
+                  <div className="space-y-4 mb-8 text-sm font-dm-sans text-navy-600">
+                    <div className="flex justify-between items-center">
+                      <span>Certification Track</span>
+                      <span className="text-navy-900 font-medium capitalize">{course.level}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Duration</span>
+                      <span className="text-navy-900 font-medium">{course.duration}</span>
                     </div>
                     {course.equipment_fee > 0 && (
-                      <div className="flex justify-between text-sm font-dm-sans">
-                        <span className="text-navy-500">Equipment Fee</span>
-                        <span className="text-navy-900">{formatPrice(course.equipment_fee)}</span>
+                      <div className="flex justify-between items-center">
+                        <span>Equipment Fee</span>
+                        <span className="text-navy-900 font-medium">{formatPrice(course.equipment_fee)}</span>
                       </div>
                     )}
                     <Separator />
-                    <div className="flex justify-between font-dm-sans font-semibold">
-                      <span className="text-navy-900">Total</span>
-                      <span className="text-navy-900">{formatPrice(totalPrice)}</span>
+                    <div className="flex justify-between items-center text-lg font-bold text-navy-900">
+                      <span>Total Due</span>
+                      <span>{formatPrice(totalPrice)}</span>
                     </div>
                   </div>
 
-                  <Button 
-                    className={`w-full py-6 font-dm-sans font-medium ${isWellness ? 'bg-sky hover:bg-sky/90' : 'bg-navy-900 hover:bg-navy-800'}`}
+                  <Button
+                    className={`w-full py-7 font-dm-sans font-bold text-lg rounded-xl transition-all ${isWellness
+                      ? 'bg-teal-500 hover:bg-teal-600 hover:shadow-teal-100 shadow-lg'
+                      : 'bg-blue-600 hover:bg-blue-700 hover:shadow-blue-100 shadow-lg'
+                      } text-white`}
                     onClick={handleEnroll}
-                    disabled={enrolling}
-                    data-testid="enroll-btn"
+                    disabled={enrolling || course.is_coming_soon}
                   >
                     {enrolling ? (
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Processing...
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Initializing Secure Checkout...
                       </div>
+                    ) : course.is_coming_soon ? (
+                      'Registration Closed'
                     ) : (
                       <>
-                        <CreditCard className="w-4 h-4 mr-2" />
-                        Enroll Now
+                        <CreditCard className="w-5 h-5 mr-3" />
+                        Enroll Securely Now
                       </>
                     )}
                   </Button>
 
-                  <p className="text-xs font-dm-sans text-navy-400 text-center mt-4">
-                    Secure payment via Stripe
+                  <p className="text-center text-[10px] text-navy-400 uppercase tracking-widest mt-6">
+                    Secure Enrollment via Stripe Terminal
                   </p>
-
-                  <div className="mt-6 p-4 bg-navy-50 rounded-lg">
-                    <p className="text-sm font-dm-sans text-navy-600">
-                      <strong>Note:</strong> ETT Foundational Course is a prerequisite for this program.
-                    </p>
-                  </div>
                 </CardContent>
               </Card>
             </motion.div>

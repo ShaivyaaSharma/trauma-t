@@ -1,0 +1,17 @@
+{
+    "name": "trauma-transformation-institute",
+    "version": "1.0.0",
+    "private": true,
+    "workspaces": [
+        "frontend"
+    ],
+    "scripts": {
+        "frontend:start": "cd frontend && npm start",
+        "frontend:build": "cd frontend && npm run build",
+        "backend:start": "cd backend && uvicorn server:app --reload",
+        "deploy": "vercel --prod"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}

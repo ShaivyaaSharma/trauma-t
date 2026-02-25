@@ -3,13 +3,13 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { 
-  BookOpen, 
-  Lock, 
-  CheckCircle2, 
-  Clock, 
-  Award, 
-  ArrowLeft, 
+import {
+  BookOpen,
+  Lock,
+  CheckCircle2,
+  Clock,
+  Award,
+  ArrowLeft,
   Play,
   Target
 } from 'lucide-react';
@@ -39,15 +39,15 @@ const CourseLearningPage = () => {
     try {
       setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
-      
+
       // Fetch course details
       const courseRes = await axios.get(`${API_URL}/api/courses/${courseId}`, { headers });
       setCourse(courseRes.data);
-      
+
       // Fetch modules with progress
       const modulesRes = await axios.get(`${API_URL}/api/courses/${courseId}/modules`, { headers });
       setModules(modulesRes.data);
-      
+
       // Fetch overall progress
       const progressRes = await axios.get(`${API_URL}/api/courses/${courseId}/progress`, { headers });
       setProgress(progressRes.data);
@@ -123,13 +123,8 @@ const CourseLearningPage = () => {
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Link to="/dashboard">
-            <Button variant="ghost" size="sm" className="mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-          </Link>
-          
+
+
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{course?.title}</h1>
@@ -145,7 +140,7 @@ const CourseLearningPage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Overall Progress Bar */}
           <div className="mt-6">
             <Progress value={progress?.overall_progress || 0} className="h-3" />
@@ -169,20 +164,9 @@ const CourseLearningPage = () => {
               </p>
             </CardContent>
           </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Duration</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">~33 Hours</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Estimated completion time
-              </p>
-            </CardContent>
-          </Card>
-          
+
+
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Certificate</CardTitle>
@@ -193,7 +177,7 @@ const CourseLearningPage = () => {
                 {progress?.completed_modules === progress?.total_modules ? 'Ready!' : 'In Progress'}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {progress?.completed_modules === progress?.total_modules 
+                {progress?.completed_modules === progress?.total_modules
                   ? 'Congratulations on completing!'
                   : 'Complete all modules to earn'}
               </p>
@@ -208,18 +192,17 @@ const CourseLearningPage = () => {
               <BookOpen className="h-6 w-6 mr-2 text-primary" />
               Week {week}
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {weekGroups[week].map(module => {
                 const status = getModuleStatus(module);
                 const isClickable = status !== 'locked';
-                
+
                 return (
-                  <Card 
-                    key={module.id} 
-                    className={`transition-all duration-200 ${getStatusColor(status)} ${
-                      isClickable ? 'hover:shadow-lg cursor-pointer' : 'cursor-not-allowed opacity-75'
-                    }`}
+                  <Card
+                    key={module.id}
+                    className={`transition-all duration-200 ${getStatusColor(status)} ${isClickable ? 'hover:shadow-lg cursor-pointer' : 'cursor-not-allowed opacity-75'
+                      }`}
                     onClick={() => isClickable && navigate(`/courses/${courseId}/modules/${module.id}`)}
                   >
                     <CardHeader>
@@ -242,14 +225,14 @@ const CourseLearningPage = () => {
                         {module.description}
                       </CardDescription>
                     </CardHeader>
-                    
+
                     <CardContent>
                       <div className="space-y-3">
                         <div className="flex items-center text-sm text-gray-600">
                           <Clock className="h-4 w-4 mr-2" />
                           {module.estimated_time}
                         </div>
-                        
+
                         {module.progress?.quiz_attempts > 0 && (
                           <div className="pt-3 border-t">
                             <div className="flex justify-between text-sm mb-1">
@@ -264,7 +247,7 @@ const CourseLearningPage = () => {
                             </div>
                           </div>
                         )}
-                        
+
                         {status === 'locked' && (
                           <div className="pt-3 border-t">
                             <p className="text-sm text-gray-600 flex items-center">
@@ -273,7 +256,7 @@ const CourseLearningPage = () => {
                             </p>
                           </div>
                         )}
-                        
+
                         {isClickable && (
                           <Button className="w-full mt-4" variant={status === 'completed' ? 'outline' : 'default'}>
                             {status === 'completed' ? 'Review Module' : 'Start Module'}

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import Layout from "@/components/Layout";
 
 // Pages
 import LandingPage from "@/pages/LandingPage";
@@ -14,11 +15,12 @@ import AboutPage from "@/pages/AboutPage";
 import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
 import CourseLearningPage from "@/pages/CourseLearningPage";
 import ModuleContentPage from "@/pages/ModuleContentPage";
+import MockCheckoutPage from "@/pages/MockCheckoutPage";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -26,11 +28,11 @@ const ProtectedRoute = ({ children }) => {
       </div>
     );
   }
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -38,47 +40,57 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/wellness" element={<WellnessHomePage />} />
-          <Route path="/clinical" element={<ClinicalHomePage />} />
-          <Route path="/courses/:courseId" element={<CourseDetailsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/payment-success" 
-            element={
-              <ProtectedRoute>
-                <PaymentSuccessPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/courses/:courseId/learn" 
-            element={
-              <ProtectedRoute>
-                <CourseLearningPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/courses/:courseId/modules/:moduleId" 
-            element={
-              <ProtectedRoute>
-                <ModuleContentPage />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/wellness" element={<WellnessHomePage />} />
+            <Route path="/clinical" element={<ClinicalHomePage />} />
+            <Route path="/courses/:courseId" element={<CourseDetailsPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment-success"
+              element={
+                <ProtectedRoute>
+                  <PaymentSuccessPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/checkout-mock"
+              element={
+                <ProtectedRoute>
+                  <MockCheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses/:courseId/learn"
+              element={
+                <ProtectedRoute>
+                  <CourseLearningPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/courses/:courseId/modules/:moduleId"
+              element={
+                <ProtectedRoute>
+                  <ModuleContentPage />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Layout>
         <Toaster position="top-right" />
       </BrowserRouter>
     </AuthProvider>

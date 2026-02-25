@@ -49,29 +49,19 @@ const LoginPage = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* Back Link */}
-        <Link 
-          to="/" 
-          className="inline-flex items-center gap-2 text-navy-500 hover:text-navy-900 transition-colors mb-8"
-          data-testid="back-home-link"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="font-dm-sans text-sm">Back to Home</span>
-        </Link>
+
 
         <Card className="border-slate-200 shadow-card">
           <CardHeader className="text-center pb-2">
-            <div className="w-12 h-12 bg-navy-900 rounded-sm flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-playfair font-bold text-xl">T</span>
-            </div>
+            <img src="/brain-logo.png" alt="Logo" className="w-16 h-16 object-contain mx-auto mb-4" />
             <CardTitle className="text-2xl font-playfair text-navy-900">
               Welcome Back
             </CardTitle>
             <CardDescription className="font-dm-sans">
-              Sign in to access your TTI account
+              Sign in to access your TraumaTransformationInstitute account
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -113,8 +103,8 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full h-12 bg-navy-900 hover:bg-navy-800 font-dm-sans font-medium mt-6"
                 disabled={loading}
                 data-testid="login-submit-btn"
@@ -133,8 +123,8 @@ const LoginPage = () => {
             <div className="mt-6 text-center">
               <p className="font-dm-sans text-sm text-navy-500">
                 Don't have an account?{' '}
-                <Link 
-                  to="/signup" 
+                <Link
+                  to="/signup"
                   className="text-sky hover:text-sky/80 font-medium"
                   data-testid="signup-link"
                 >

@@ -50,38 +50,9 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-navy-50/30">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-navy-900 rounded-sm flex items-center justify-center">
-                <span className="text-white font-playfair font-bold text-sm">T</span>
-              </div>
-              <span className="font-playfair font-semibold text-navy-900">TTI Dashboard</span>
-            </Link>
-            
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-dm-sans text-navy-600">
-                {user?.name}
-              </span>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleLogout}
-                className="font-dm-sans"
-                data-testid="logout-btn"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Content */}
-      <div className="pt-24 pb-12 px-6">
+      < div className="pt-24 pb-12 px-6" >
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -113,7 +84,7 @@ const DashboardPage = () => {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card className="border-slate-200 shadow-card">
                 <CardContent className="p-6 flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
@@ -127,7 +98,7 @@ const DashboardPage = () => {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card className="border-slate-200 shadow-card">
                 <CardContent className="p-6 flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
@@ -187,7 +158,7 @@ const DashboardPage = () => {
                               <h3 className="font-playfair font-semibold text-navy-900">
                                 {item.course.title}
                               </h3>
-                              <Badge 
+                              <Badge
                                 className={`font-dm-sans text-xs ${item.course.track === 'wellness' ? 'bg-sky/10 text-sky' : 'bg-navy-100 text-navy-700'}`}
                               >
                                 {item.course.track}
@@ -205,18 +176,16 @@ const DashboardPage = () => {
                             <Badge className="bg-emerald-100 text-emerald-700 font-dm-sans">
                               Enrolled
                             </Badge>
-                            {item.course.title === 'ETT Foundational Course' && (
-                              <Button 
-                                size="sm"
-                                className="bg-sky hover:bg-sky/90 font-dm-sans"
-                                onClick={() => navigate(`/courses/${item.course.id}/learn`)}
-                              >
-                                <BookOpen className="w-3 h-3 mr-1" />
-                                Start Learning
-                              </Button>
-                            )}
-                            <Button 
-                              variant="outline" 
+                            <Button
+                              size="sm"
+                              className="bg-sky hover:bg-sky/90 font-dm-sans"
+                              onClick={() => navigate(`/courses/${item.course.id}/learn`)}
+                            >
+                              <BookOpen className="w-3 h-3 mr-1" />
+                              Start Learning
+                            </Button>
+                            <Button
+                              variant="outline"
                               size="sm"
                               className="font-dm-sans"
                               onClick={() => navigate(`/courses/${item.course.id}`)}
@@ -250,7 +219,7 @@ const DashboardPage = () => {
                     </Button>
                   </CardContent>
                 </Card>
-                
+
                 <Card className="border-slate-200 shadow-card hover:shadow-card-hover transition-all cursor-pointer">
                   <CardContent className="p-6">
                     <h3 className="font-playfair font-semibold text-navy-900 mb-2">
@@ -268,8 +237,8 @@ const DashboardPage = () => {
             )}
           </motion.div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

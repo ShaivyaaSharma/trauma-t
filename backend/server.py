@@ -12,17 +12,22 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
 import bcrypt
-from emergentintegrations.payments.stripe.checkout import (
-    StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
-)
+try:
+    from emergentintegrations.payments.stripe.checkout import (
+        StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
+    )
+    _STRIPE_AVAILABLE = True
+except ImportError:
+    StripeCheckout = CheckoutSessionResponse = CheckoutStatusResponse = CheckoutSessionRequest = None
+    _STRIPE_AVAILABLE = False
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[os.environ.get('DB_NAME', 'tti_db')]
 
 # JWT Config
 JWT_SECRET = os.environ.get('JWT_SECRET_KEY', 'tti_secret_key_2024')
@@ -274,11 +279,24 @@ async def get_me(user: dict = Depends(get_current_user)):
 
 # ============ COURSE ROUTES ============
 
+@api_router.get("/courses/{course_id}/curriculum")
+async def get_course_curriculum(course_id: str):
+    """Public endpoint to get module names and descriptions for the details page"""
+    modules = await db.modules.find(
+        {"course_id": course_id}, 
+        {"_id": 0, "quiz_questions": 0, "assessment": 0}
+    ).sort("module_number", 1).to_list(100)
+    return modules
+
 @api_router.get("/courses", response_model=List[Course])
 async def get_courses(track: Optional[str] = None):
     query = {}
     if track:
-        query["track"] = track
+        # If a track is specified, show courses for that track OR courses meant for 'both'
+        query["$or"] = [
+            {"track": track},
+            {"track": "both"}
+        ]
     courses = await db.courses.find(query, {"_id": 0}).to_list(100)
     return courses
 
@@ -299,6 +317,8 @@ async def create_course(course_data: CourseCreate):
 
 @api_router.post("/enrollments/checkout")
 async def create_checkout(request: Request, checkout_data: CheckoutRequest, user: dict = Depends(get_current_user)):
+    if not _STRIPE_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Stripe integration not available")
     # Get course details
     course = await db.courses.find_one({"id": checkout_data.course_id}, {"_id": 0})
     if not course:
@@ -368,6 +388,8 @@ async def create_checkout(request: Request, checkout_data: CheckoutRequest, user
 
 @api_router.get("/payments/status/{session_id}")
 async def get_payment_status(request: Request, session_id: str, user: dict = Depends(get_current_user)):
+    if not _STRIPE_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Stripe integration not available")
     # Get transaction
     transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
     if not transaction:
@@ -426,6 +448,8 @@ async def get_payment_status(request: Request, session_id: str, user: dict = Dep
 
 @api_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
+    if not _STRIPE_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Stripe integration not available")
     body = await request.body()
     signature = request.headers.get("Stripe-Signature", "")
     

@@ -1,31 +1,27 @@
 {
   "version": 2,
-  "name": "tti-app",
+  "name": "trauma-transformation-institute",
   "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "frontend/build"
+        "distDir": "build"
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "source": "/api/(.*)",
+      "destination": "api/index.py"
     },
     {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
-  ],
-  "env": {
-    "REACT_APP_BACKEND_URL": "@backend_url"
-  },
-  "build": {
-    "env": {
-      "REACT_APP_BACKEND_URL": "@backend_url"
-    }
-  }
+  ]
 }
