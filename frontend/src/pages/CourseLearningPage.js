@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
@@ -33,9 +33,9 @@ const CourseLearningPage = () => {
     if (token && courseId) {
       fetchData();
     }
-  }, [token, courseId]);
+  }, [token, courseId, fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
@@ -62,7 +62,7 @@ const CourseLearningPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId, token, navigate]);
 
   const getModuleStatus = (module) => {
     const prog = module.progress || {};

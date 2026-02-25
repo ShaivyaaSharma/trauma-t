@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  Award, 
+import {
+  CheckCircle2,
+  XCircle,
+  Award,
   AlertCircle,
   RefreshCw,
   TrendingUp
@@ -29,9 +29,9 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
 
   useEffect(() => {
     fetchQuiz();
-  }, [courseId, moduleId]);
+  }, [fetchQuiz]);
 
-  const fetchQuiz = async () => {
+  const fetchQuiz = useCallback(async () => {
     try {
       setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
@@ -48,7 +48,7 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId, moduleId, token]);
 
   const handleAnswerChange = (questionIndex, optionIndex) => {
     setAnswers(prev => ({
@@ -67,18 +67,18 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
     try {
       setSubmitting(true);
       const headers = { Authorization: `Bearer ${token}` };
-      
+
       // Convert answers object to array
       const answersArray = quiz.questions.map((_, index) => answers[index] ?? -1);
-      
+
       const res = await axios.post(
         `${API_URL}/api/courses/${courseId}/modules/${moduleId}/submit-quiz`,
         { module_id: moduleId, answers: answersArray },
         { headers }
       );
-      
+
       setResult(res.data);
-      
+
       if (res.data.passed) {
         toast.success(`Congratulations! You passed with ${(res.data.score * 100).toFixed(0)}%`);
       } else {
@@ -190,11 +190,10 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
           </CardHeader>
           <CardContent className="space-y-6">
             {result.questions_review.map((review, index) => (
-              <div 
-                key={index} 
-                className={`p-4 rounded-lg border-2 ${
-                  review.is_correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
-                }`}
+              <div
+                key={index}
+                className={`p-4 rounded-lg border-2 ${review.is_correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                  }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
@@ -214,24 +213,23 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
                     <XCircle className="h-6 w-6 text-red-600 flex-shrink-0" />
                   )}
                 </div>
-                
+
                 <div className="space-y-2 mt-3">
                   <div className="flex items-start">
                     <span className="text-sm font-medium text-gray-600 mr-2">Your answer:</span>
-                    <span className={`text-sm ${
-                      review.is_correct ? 'text-green-700' : 'text-red-700'
-                    }`}>
+                    <span className={`text-sm ${review.is_correct ? 'text-green-700' : 'text-red-700'
+                      }`}>
                       {review.user_answer}
                     </span>
                   </div>
-                  
+
                   {!review.is_correct && (
                     <div className="flex items-start">
                       <span className="text-sm font-medium text-gray-600 mr-2">Correct answer:</span>
                       <span className="text-sm text-green-700">{review.correct_answer}</span>
                     </div>
                   )}
-                  
+
                   {review.explanation && (
                     <div className="mt-3 pt-3 border-t">
                       <p className="text-sm text-gray-700">
@@ -314,7 +312,7 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
                 {question.options.map((option, optIndex) => (
                   <div key={optIndex} className="flex items-center space-x-3">
                     <RadioGroupItem value={optIndex.toString()} id={`q${index}-opt${optIndex}`} />
-                    <Label 
+                    <Label
                       htmlFor={`q${index}-opt${optIndex}`}
                       className="flex-1 cursor-pointer py-2"
                     >
@@ -333,8 +331,8 @@ const QuizComponent = ({ courseId, moduleId, onComplete }) => {
         <div className="text-sm text-gray-600">
           {Object.keys(answers).length} of {quiz.questions.length} questions answered
         </div>
-        <Button 
-          onClick={handleSubmit} 
+        <Button
+          onClick={handleSubmit}
           disabled={submitting || Object.keys(answers).length !== quiz.questions.length}
           size="lg"
         >

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
@@ -32,9 +32,9 @@ const ModuleContentPage = () => {
     if (token && courseId && moduleId) {
       fetchModule();
     }
-  }, [token, courseId, moduleId]);
+  }, [token, courseId, moduleId, fetchModule]);
 
-  const fetchModule = async () => {
+  const fetchModule = useCallback(async () => {
     try {
       setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
@@ -51,7 +51,7 @@ const ModuleContentPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId, moduleId, token, navigate]);
 
   const handleQuizComplete = () => {
     fetchModule();
