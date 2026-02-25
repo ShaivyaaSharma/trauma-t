@@ -1,7 +1,7 @@
 # Files and directories to ignore during Vercel deployment
 
 # Backend files (if deploying frontend only)
-backend/
+# backend/
 
 # Python files
 *.pyc
